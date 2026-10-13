@@ -31,6 +31,9 @@ pnpm build && pnpm start   # production: server serves apps/web/dist
 - No secrets in client code or in the repo.
 - TV screen must stay usable with arrow keys + Enter (future Android TV remote) and fit 1280x720 and 1920x1080 without scrolling. Size TV elements in rem: `useTvScale` scales rem with screen height.
 - Phone screens must work at 360px wide.
+- Family friendly: playful, kid-safe wording and visuals; no scary or mature content in UI, questions or sounds.
+- Music and sound effects are original and synthesized with the Web Audio API (`apps/web/src/audio`): no audio files, no licensed songs. New songs go in `songs.ts`.
+- Decorative animation must respect `prefers-reduced-motion` (handled globally in `index.css`).
 
 ## Definition of done
 
