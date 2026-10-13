@@ -31,3 +31,33 @@ test('dev server proxies the API health check', async ({ request }) => {
   expect(response.ok()).toBe(true);
   expect(await response.json()).toEqual({ ok: true });
 });
+
+test('music starts on the first key press and the button turns it off and on', async ({ page }) => {
+  await page.goto('/tv');
+  const musicButton = page.getByRole('button', { name: /^Music (on|off)$/ });
+  await expect(musicButton).toHaveAttribute('aria-pressed', 'false');
+
+  await page.keyboard.press('Space');
+  await expect(musicButton).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByTestId('now-playing')).toContainText('Lobby Bounce');
+
+  await page.getByRole('button', { name: 'Next song' }).click();
+  await expect(page.getByTestId('now-playing')).toContainText('Silly Parade');
+
+  await musicButton.click();
+  await expect(musicButton).toHaveAttribute('aria-pressed', 'false');
+  await expect(page.getByTestId('now-playing')).toHaveCount(0);
+
+  // Turning it off is remembered, so a reload stays quiet even after a key press.
+  await page.reload();
+  await page.keyboard.press('Space');
+  await expect(page.getByRole('button', { name: 'Music off' })).toHaveAttribute(
+    'aria-pressed',
+    'false',
+  );
+  await page.getByRole('button', { name: 'Music off' }).click();
+  await expect(page.getByRole('button', { name: 'Music on' })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
+});
