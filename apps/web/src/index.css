@@ -1,0 +1,50 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-display: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+  --color-night-950: #0b0620;
+  --color-night-900: #120b2e;
+  --color-night-800: #1d1247;
+  --color-night-700: #2b1b66;
+  --color-pop-pink: #ff4f9a;
+  --color-pop-yellow: #ffd23f;
+  --color-pop-cyan: #3ee0d0;
+  --color-pop-orange: #ff8a3d;
+  --color-pop-lime: #a6e22e;
+  --color-pop-violet: #9b7bff;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  @apply bg-night-950 text-white antialiased;
+  font-family: var(--font-display);
+}
+
+/* Visible focus ring everywhere: the TV screen will be driven by a remote later. */
+:focus-visible {
+  outline: 3px solid var(--color-pop-yellow);
+  outline-offset: 3px;
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.6) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
