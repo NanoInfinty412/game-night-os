@@ -16,6 +16,8 @@ export default defineConfig({
       testMatch: /tv\..*spec/,
     },
     { name: 'phone', use: { ...devices['Pixel 7'] }, testMatch: /play\..*spec/ },
+    // Opens its own TV and phone contexts inside each test.
+    { name: 'multiplayer', use: { ...devices['Desktop Chrome'] }, testMatch: /lobby\..*spec/ },
   ],
   webServer: [
     {

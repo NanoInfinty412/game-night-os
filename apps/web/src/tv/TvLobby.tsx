@@ -2,18 +2,31 @@ import { MAX_PLAYERS, MIN_PLAYERS } from '@gno/shared';
 import { FloatingShapes } from '../components/FloatingShapes';
 import { Logo } from '../components/Logo';
 import { EmptySeat, PlayerCard } from '../components/PlayerCard';
-import { PreviewBadge } from '../components/PreviewBadge';
 import { buildJoinUrl } from '../joinUrl';
-import { SAMPLE_PLAYERS, SAMPLE_ROOM_CODE } from '../sampleData';
 import { MusicControl } from './MusicControl';
 import { QrCode } from './QrCode';
 import { RoomCodeTiles } from './RoomCodeTiles';
+import { useHostRoom } from './useHostRoom';
 import { useTvScale } from './useTvScale';
 
 export function TvLobby() {
   useTvScale();
-  const roomCode = SAMPLE_ROOM_CODE;
-  const players = SAMPLE_PLAYERS;
+  const state = useHostRoom();
+
+  if (state.status !== 'ready') {
+    return (
+      <main className="relative flex min-h-screen flex-col items-center justify-center gap-6 bg-night-950 px-6 text-center">
+        <FloatingShapes />
+        <Logo className="relative text-6xl" />
+        <p data-testid="tv-status" className="relative text-3xl font-semibold text-white/80">
+          {state.status === 'error' ? `😕 ${state.message}` : 'Setting up your room… 🎈'}
+        </p>
+      </main>
+    );
+  }
+
+  const roomCode = state.room.code;
+  const players = state.room.players;
   const joinUrl = buildJoinUrl(window.location.origin, roomCode);
   const displayHost = new URL(joinUrl).host;
   const canStart = players.length >= MIN_PLAYERS;
@@ -25,7 +38,14 @@ export function TvLobby() {
       <header className="relative flex items-center justify-between gap-4">
         <Logo className="text-4xl lg:text-5xl" />
         <div className="flex items-center gap-4">
-          <PreviewBadge />
+          {!state.connected && (
+            <span
+              role="status"
+              className="rounded-full bg-pop-orange/20 px-4 py-1 text-lg font-semibold text-pop-orange"
+            >
+              📶 Reconnecting…
+            </span>
+          )}
           <MusicControl />
         </div>
       </header>

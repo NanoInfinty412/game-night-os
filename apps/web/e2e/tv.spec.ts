@@ -1,26 +1,41 @@
 import { expect, test } from '@playwright/test';
+import { fillRoom } from './bots';
 
-test('TV lobby shows room code, QR code and player seats', async ({ page }) => {
+test('TV creates a room with a fresh code, QR code and empty seats', async ({ page }) => {
   await page.goto('/tv');
-  await expect(page.getByTestId('room-code')).toHaveText('PLAY');
+  await expect(page.getByTestId('room-code')).toHaveText(/^[A-HJ-NP-Z]{4}$/);
   await expect(page.getByTestId('join-qr')).toBeVisible();
-  await expect(page.getByTestId('player-card')).toHaveCount(3);
-  await expect(page.getByTestId('empty-seat')).toHaveCount(5);
-  await expect(page.getByTestId('player-count')).toHaveText('3 / 8');
+  await expect(page.getByTestId('player-card')).toHaveCount(0);
+  await expect(page.getByTestId('empty-seat')).toHaveCount(8);
+  await expect(page.getByTestId('player-count')).toHaveText('0 / 8');
+  await expect(page.getByText('Waiting for at least 2 players')).toBeVisible();
 });
 
 for (const { width, height } of [
   { width: 1280, height: 720 },
   { width: 1920, height: 1080 },
 ]) {
-  test(`TV lobby fits ${width}x${height} without scrolling`, async ({ page }) => {
+  test(`TV lobby with a full room fits ${width}x${height} without scrolling`, async ({ page }) => {
     await page.setViewportSize({ width, height });
     await page.goto('/tv');
     await expect(page.getByTestId('join-qr')).toBeVisible();
+    const code = (await page.getByTestId('room-code').textContent())!;
+    const disconnectBots = await fillRoom(code, [
+      'Grandma',
+      'Grandpa',
+      'Mum',
+      'Dad',
+      'Ada',
+      'Sam',
+      'Big Mike',
+      'Lou',
+    ]);
+    await expect(page.getByTestId('player-card')).toHaveCount(8);
     const size = await page.evaluate(() => ({
       w: document.documentElement.scrollWidth,
       h: document.documentElement.scrollHeight,
     }));
+    disconnectBots();
     expect(size.w).toBeLessThanOrEqual(width);
     expect(size.h).toBeLessThanOrEqual(height);
   });

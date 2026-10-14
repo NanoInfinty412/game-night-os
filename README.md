@@ -16,7 +16,9 @@ pnpm dev
   On Windows, find the IP with `ipconfig` and allow Node through the firewall on private networks if asked.
   The QR code uses the address the TV page was opened with, so open `/tv` via the LAN IP (not `localhost`) when testing with phones.
 
-Milestone 1 status: screens use sample data; real rooms arrive in milestone 2.
+Status: milestone 2. The TV creates a real room and phones join it live; the trivia game arrives in milestone 3.
+
+If `pnpm` isn't recognized on Windows after `npm install -g pnpm`, run the same commands as `npx pnpm install` and `npx pnpm dev`.
 
 ## Checks
 

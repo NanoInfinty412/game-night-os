@@ -4,8 +4,9 @@ The server is the only source of truth. Clients send **intents**; the server val
 with a Zod schema from `packages/shared`, applies it, and broadcasts **snapshots**. A client never
 sends a score, a phase, or another player's id.
 
-Status: milestone 1 defines the phases and the join payload. Socket events are implemented in
-milestone 2 and the game events in milestone 3; this file is updated in the same change.
+Status: room membership (milestone 2) is implemented in `apps/server/src/socket/roomSockets.ts`
+and `apps/server/src/rooms/roomManager.ts`. Game events arrive in milestone 3; this file is updated
+in the same change.
 
 ## Roles
 
@@ -28,30 +29,50 @@ any phase except LOBBY ──TV disconnects──► PAUSED ──TV reconnects�
 
 Every other transition is illegal and is rejected without changing state.
 
-## Planned events
+## Events
+
+Every client request carries a Socket.IO acknowledgement and gets exactly one reply:
+`{ ok: true, data }` or `{ ok: false, error: { code, message } }`. Requests without an
+acknowledgement are ignored. `message` is friendly text safe to show on screen.
 
 Client → server (intents):
 
-| Event         | Payload                                        | Who         | Milestone |
-| ------------- | ---------------------------------------------- | ----------- | --------- |
-| `room:create` | `{}`                                           | TV          | 2         |
-| `room:join`   | `{ roomCode, nickname }` (`joinRequestSchema`) | phone       | 2         |
-| `room:resume` | `{ roomCode, token }`                          | TV or phone | 2         |
-| `room:leave`  | `{}`                                           | phone       | 2         |
-| `game:start`  | `{}`                                           | VIP         | 3         |
-| `game:answer` | `{ questionId, choice }`                       | player      | 3         |
-| `game:next`   | `{}`                                           | VIP         | 3         |
+| Event           | Payload                                        | Reply data                      | Who                           | Milestone |
+| --------------- | ---------------------------------------------- | ------------------------------- | ----------------------------- | --------- |
+| `host:create`   | none                                           | `{ roomCode, hostToken }`       | TV                            | 2         |
+| `host:resume`   | `{ roomCode, token }` (`resumeRequestSchema`)  | `{ roomCode, hostToken }`       | TV after refresh              | 2         |
+| `player:join`   | `{ roomCode, nickname }` (`joinRequestSchema`) | `{ roomCode, playerId, token }` | phone                         | 2         |
+| `player:resume` | `{ roomCode, token }` (`resumeRequestSchema`)  | `{ roomCode, playerId, token }` | phone after refresh/reconnect | 2         |
+| `player:leave`  | none                                           | `null`                          | phone                         | 2         |
+| `game:start`    | `{}`                                           |                                 | VIP                           | 3         |
+| `game:answer`   | `{ questionId, choice }`                       |                                 | player                        | 3         |
+| `game:next`     | `{}`                                           |                                 | VIP                           | 3         |
 
 Server → client:
 
-| Event        | Payload                | Notes                                                                   |
-| ------------ | ---------------------- | ----------------------------------------------------------------------- |
-| `room:state` | role-specific snapshot | TV gets the public view; each phone also gets its own private data      |
-| `error`      | `{ code, message }`    | e.g. `ROOM_NOT_FOUND`, `NICKNAME_TAKEN`, `ROOM_FULL`, `INVALID_PAYLOAD` |
+| Event         | Payload                                                  | Notes                                                                                               |
+| ------------- | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `room:state`  | `RoomSnapshot` `{ code, phase, players, hostConnected }` | Sent to the whole room after every change, including before the reply to the request that caused it |
+| `room:closed` | none                                                     | The room was removed; clients forget their stored session                                           |
+
+Error codes: `INVALID_PAYLOAD`, `ROOM_NOT_FOUND`, `ROOM_FULL`, `NICKNAME_TAKEN`, `SESSION_NOT_FOUND`,
+`NOT_IN_ROOM`, `INTERNAL_ERROR`.
+
+## Sessions and reconnects
+
+- The TV keeps `{ roomCode, hostToken }` in `sessionStorage` (per tab) and resumes on refresh.
+- A phone keeps `{ roomCode, playerId, token }` in `localStorage` and resumes on refresh, reconnect,
+  or reopening the link. Opening a QR link for a different room starts a fresh join.
+- Only the newest socket speaks for a seat; an older tab is silently detached.
+- A disconnected player keeps their seat (shown as reconnecting) for 60 s in the lobby, then is removed.
+- If the VIP leaves, the earliest remaining joiner becomes VIP. Seats are reused lowest-first.
+- A room with no connected TV and no connected phones is deleted after 30 minutes of inactivity.
+  A lobby with its TV still connected is never deleted.
 
 Correct answers never appear in any payload before the `REVEAL` phase.
 
 ## Limits
 
 - Room code: 4 letters from `ABCDEFGHJKLMNPQRSTUVWXYZ` (no I or O).
-- Players: 2 to 8. Nickname: 1 to 16 characters after trimming, unique within a room.
+- Players: 2 to 8. Nickname: 1 to 16 characters after trimming, unique within a room (ignoring case).
+- Room codes never spell a word from the blocklist in `apps/server/src/rooms/roomCode.ts`.

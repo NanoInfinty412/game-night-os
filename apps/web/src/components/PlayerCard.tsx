@@ -3,10 +3,11 @@ import { seatAvatar } from './avatars';
 import { playerColor } from './playerColor';
 
 export function PlayerCard({ player, index }: { player: PublicPlayer; index: number }) {
-  const color = playerColor(index);
+  const color = playerColor(player.seat);
   return (
     <li
       data-testid="player-card"
+      data-connected={player.connected}
       className="relative flex animate-[pop-in_500ms_cubic-bezier(.34,1.56,.64,1)_both] flex-col items-center gap-3 rounded-[1.75rem] bg-night-800 p-5 ring-4"
       style={{ animationDelay: `${index * 120}ms`, ['--tw-ring-color' as string]: `${color}55` }}
     >
@@ -20,9 +21,14 @@ export function PlayerCard({ player, index }: { player: PublicPlayer; index: num
         style={{ backgroundColor: color, animationDelay: `${index * 0.3}s` }}
         aria-hidden
       >
-        {seatAvatar(index)}
+        {seatAvatar(player.seat)}
       </div>
       <span className="max-w-full truncate text-2xl font-bold">{player.nickname}</span>
+      {!player.connected && (
+        <span className="absolute inset-x-3 bottom-2 rounded-full bg-night-950/80 py-0.5 text-center text-sm font-semibold text-white/70">
+          📶 reconnecting…
+        </span>
+      )}
     </li>
   );
 }

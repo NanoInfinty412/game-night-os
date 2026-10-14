@@ -6,8 +6,8 @@ First game: Trivia Chaos. Protocol, phases and events: `docs/protocol.md`.
 ## Layout
 
 - `apps/web` React + Vite + Tailwind v4 + React Router. `src/tv`, `src/play`, `src/components`, `e2e/` (Playwright).
-- `apps/server` Fastify (+ Socket.IO from milestone 2). `buildApp()` in `src/app.ts` is what tests use.
-- `packages/shared` Zod schemas, types, and (from milestone 3) the pure game engine. Imported as `@gno/shared`.
+- `apps/server` Fastify + Socket.IO. `buildApp()` in `src/app.ts` is what tests use. Room rules live in `src/rooms/roomManager.ts` (no sockets or timers); socket wiring, grace timers and sweeping in `src/socket/roomSockets.ts`.
+- `packages/shared` Zod schemas, protocol types (`protocol.ts`), and (from milestone 3) the pure game engine. Imported as `@gno/shared`.
 - `content/packs` trivia question packs (JSON).
 
 ## Commands
