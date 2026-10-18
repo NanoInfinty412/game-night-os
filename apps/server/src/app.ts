@@ -3,7 +3,8 @@ import Fastify, { type FastifyInstance } from 'fastify';
 import fastifyStatic from '@fastify/static';
 import { Server } from 'socket.io';
 import { RoomManager } from './rooms/roomManager.js';
-import type { ClientToServerEvents, ServerToClientEvents } from '@gno/shared';
+import type { ClientToServerEvents, ServerToClientEvents, TriviaSettings } from '@gno/shared';
+import { loadQuestionPack } from './game/questionPack.js';
 import {
   DEFAULT_ROOM_SOCKET_OPTIONS,
   registerRoomSockets,
@@ -17,6 +18,8 @@ export interface AppOptions {
   logger?: boolean;
   rooms?: RoomManager;
   roomSockets?: Partial<RoomSocketOptions>;
+  /** Game length and timings; used when `rooms` is not given. */
+  trivia?: Partial<TriviaSettings>;
 }
 
 export async function buildApp(options: AppOptions = {}): Promise<FastifyInstance> {
@@ -33,7 +36,10 @@ export async function buildApp(options: AppOptions = {}): Promise<FastifyInstanc
   >(app.server, {
     serveClient: false,
   });
-  const stopRoomSockets = registerRoomSockets(io, options.rooms ?? new RoomManager(), app.log, {
+  const rooms =
+    options.rooms ??
+    new RoomManager({ questions: loadQuestionPack().questions, trivia: options.trivia });
+  const stopRoomSockets = registerRoomSockets(io, rooms, app.log, {
     ...DEFAULT_ROOM_SOCKET_OPTIONS,
     ...options.roomSockets,
   });

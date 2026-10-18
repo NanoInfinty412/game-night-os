@@ -1,0 +1,1269 @@
+{
+  "id": "family-classics",
+  "title": "Family Classics",
+  "questions": [
+    {
+      "id": "animals-01",
+      "category": "Animals",
+      "prompt": "What is the largest animal that has ever lived?",
+      "choices": ["Blue whale", "African elephant", "T. rex", "Giraffe"],
+      "answer": 0
+    },
+    {
+      "id": "animals-02",
+      "category": "Animals",
+      "prompt": "How many legs does a spider have?",
+      "choices": ["6", "8", "10", "12"],
+      "answer": 1
+    },
+    {
+      "id": "animals-03",
+      "category": "Animals",
+      "prompt": "What do you call a baby kangaroo?",
+      "choices": ["Cub", "Kit", "Joey", "Calf"],
+      "answer": 2
+    },
+    {
+      "id": "animals-04",
+      "category": "Animals",
+      "prompt": "Which bird is famous for copying words people say?",
+      "choices": ["Owl", "Penguin", "Flamingo", "Parrot"],
+      "answer": 3
+    },
+    {
+      "id": "animals-05",
+      "category": "Animals",
+      "prompt": "What is the fastest land animal?",
+      "choices": ["Cheetah", "Lion", "Horse", "Gazelle"],
+      "answer": 0
+    },
+    {
+      "id": "animals-06",
+      "category": "Animals",
+      "prompt": "Which animal is often called the king of the jungle?",
+      "choices": ["Tiger", "Lion", "Gorilla", "Elephant"],
+      "answer": 1
+    },
+    {
+      "id": "animals-07",
+      "category": "Animals",
+      "prompt": "What sweet food do bees make?",
+      "choices": ["Milk", "Jam", "Honey", "Butter"],
+      "answer": 2
+    },
+    {
+      "id": "animals-08",
+      "category": "Animals",
+      "prompt": "How many hearts does an octopus have?",
+      "choices": ["One", "Two", "Five", "Three"],
+      "answer": 3
+    },
+    {
+      "id": "animals-09",
+      "category": "Animals",
+      "prompt": "What color are flamingo chicks when they hatch?",
+      "choices": ["Gray", "Pink", "Bright orange", "Blue"],
+      "answer": 0
+    },
+    {
+      "id": "animals-10",
+      "category": "Animals",
+      "prompt": "What is a group of lions called?",
+      "choices": ["A pack", "A pride", "A flock", "A herd"],
+      "answer": 1
+    },
+    {
+      "id": "animals-11",
+      "category": "Animals",
+      "prompt": "Which of these mammals can truly fly?",
+      "choices": ["Flying squirrel", "Sugar glider", "Bat", "Penguin"],
+      "answer": 2
+    },
+    {
+      "id": "animals-12",
+      "category": "Animals",
+      "prompt": "What does a caterpillar turn into?",
+      "choices": ["Beetle", "Bee", "Dragonfly", "Butterfly"],
+      "answer": 3
+    },
+    {
+      "id": "animals-13",
+      "category": "Animals",
+      "prompt": "Which animal has black and white stripes?",
+      "choices": ["Zebra", "Leopard", "Giraffe", "Cheetah"],
+      "answer": 0
+    },
+    {
+      "id": "animals-14",
+      "category": "Animals",
+      "prompt": "What does a frog start its life as?",
+      "choices": ["Caterpillar", "Tadpole", "Chick", "Pup"],
+      "answer": 1
+    },
+    {
+      "id": "animals-15",
+      "category": "Animals",
+      "prompt": "What is the tallest animal in the world?",
+      "choices": ["Elephant", "Ostrich", "Giraffe", "Camel"],
+      "answer": 2
+    },
+    {
+      "id": "animals-16",
+      "category": "Animals",
+      "prompt": "Which bird can't fly but is the fastest runner of all birds?",
+      "choices": ["Penguin", "Kiwi", "Chicken", "Ostrich"],
+      "answer": 3
+    },
+    {
+      "id": "animals-17",
+      "category": "Animals",
+      "prompt": "What do giant pandas mostly eat?",
+      "choices": ["Bamboo", "Fish", "Berries", "Grass"],
+      "answer": 0
+    },
+    {
+      "id": "animals-18",
+      "category": "Animals",
+      "prompt": "What is a baby dog called?",
+      "choices": ["Kitten", "Puppy", "Foal", "Cub"],
+      "answer": 1
+    },
+    {
+      "id": "ocean-01",
+      "category": "Ocean",
+      "prompt": "What is the largest ocean on Earth?",
+      "choices": ["Atlantic", "Indian", "Pacific", "Arctic"],
+      "answer": 2
+    },
+    {
+      "id": "ocean-02",
+      "category": "Ocean",
+      "prompt": "How many arms does a starfish usually have?",
+      "choices": ["Four", "Six", "Eight", "Five"],
+      "answer": 3
+    },
+    {
+      "id": "ocean-03",
+      "category": "Ocean",
+      "prompt": "What kind of animal is a dolphin?",
+      "choices": ["Mammal", "Fish", "Reptile", "Amphibian"],
+      "answer": 0
+    },
+    {
+      "id": "ocean-04",
+      "category": "Ocean",
+      "prompt": "What do you call a baby whale?",
+      "choices": ["Pup", "Calf", "Kitten", "Joey"],
+      "answer": 1
+    },
+    {
+      "id": "ocean-05",
+      "category": "Ocean",
+      "prompt": "Which orange and white striped fish lives in sea anemones?",
+      "choices": ["Goldfish", "Swordfish", "Clownfish", "Catfish"],
+      "answer": 2
+    },
+    {
+      "id": "ocean-06",
+      "category": "Ocean",
+      "prompt": "A seahorse is actually a type of what?",
+      "choices": ["Mammal", "Shrimp", "Plant", "Fish"],
+      "answer": 3
+    },
+    {
+      "id": "ocean-07",
+      "category": "Ocean",
+      "prompt": "Which body part lets a fish breathe underwater?",
+      "choices": ["Gills", "Fins", "Scales", "Tail"],
+      "answer": 0
+    },
+    {
+      "id": "ocean-08",
+      "category": "Ocean",
+      "prompt": "About how much of Earth's surface is covered by water?",
+      "choices": ["About 30%", "About 70%", "About 50%", "About 90%"],
+      "answer": 1
+    },
+    {
+      "id": "ocean-09",
+      "category": "Ocean",
+      "prompt": "Which sea animal squirts ink to escape danger?",
+      "choices": ["Jellyfish", "Starfish", "Octopus", "Crab"],
+      "answer": 2
+    },
+    {
+      "id": "ocean-10",
+      "category": "Ocean",
+      "prompt": "What do sea otters do while napping so they don't float apart?",
+      "choices": ["Sing songs", "Dig holes", "Blow bubbles", "Hold hands"],
+      "answer": 3
+    },
+    {
+      "id": "space-01",
+      "category": "Space",
+      "prompt": "Which planet is closest to the Sun?",
+      "choices": ["Mercury", "Venus", "Mars", "Earth"],
+      "answer": 0
+    },
+    {
+      "id": "space-02",
+      "category": "Space",
+      "prompt": "Which planet is known as the Red Planet?",
+      "choices": ["Jupiter", "Mars", "Venus", "Saturn"],
+      "answer": 1
+    },
+    {
+      "id": "space-03",
+      "category": "Space",
+      "prompt": "What is the largest planet in our solar system?",
+      "choices": ["Saturn", "Neptune", "Jupiter", "Earth"],
+      "answer": 2
+    },
+    {
+      "id": "space-04",
+      "category": "Space",
+      "prompt": "Which planet is most famous for its beautiful rings?",
+      "choices": ["Mars", "Mercury", "Venus", "Saturn"],
+      "answer": 3
+    },
+    {
+      "id": "space-05",
+      "category": "Space",
+      "prompt": "What is the Sun?",
+      "choices": ["A star", "A planet", "A moon", "A comet"],
+      "answer": 0
+    },
+    {
+      "id": "space-06",
+      "category": "Space",
+      "prompt": "How many planets are in our solar system?",
+      "choices": ["7", "8", "9", "10"],
+      "answer": 1
+    },
+    {
+      "id": "space-07",
+      "category": "Space",
+      "prompt": "Who was the first person to walk on the Moon?",
+      "choices": ["Buzz Aldrin", "Yuri Gagarin", "Neil Armstrong", "Sally Ride"],
+      "answer": 2
+    },
+    {
+      "id": "space-08",
+      "category": "Space",
+      "prompt": "What do we call a group of stars that makes a picture in the sky?",
+      "choices": ["Galaxy", "Comet", "Orbit", "Constellation"],
+      "answer": 3
+    },
+    {
+      "id": "space-09",
+      "category": "Space",
+      "prompt": "What is the name of our galaxy?",
+      "choices": ["The Milky Way", "Andromeda", "The Big Dipper", "Orion"],
+      "answer": 0
+    },
+    {
+      "id": "space-10",
+      "category": "Space",
+      "prompt": "How long does it take Earth to travel once around the Sun?",
+      "choices": ["1 day", "About 1 year", "1 month", "10 years"],
+      "answer": 1
+    },
+    {
+      "id": "space-11",
+      "category": "Space",
+      "prompt": "Which planet is the hottest in our solar system?",
+      "choices": ["Mercury", "Mars", "Venus", "Jupiter"],
+      "answer": 2
+    },
+    {
+      "id": "space-12",
+      "category": "Space",
+      "prompt": "Why does the Moon shine at night?",
+      "choices": [
+        "It is on fire",
+        "It has city lights",
+        "It is made of glowing rocks",
+        "It reflects sunlight"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "space-13",
+      "category": "Space",
+      "prompt": "In what year did people first land on the Moon?",
+      "choices": ["1969", "1959", "1979", "1989"],
+      "answer": 0
+    },
+    {
+      "id": "space-14",
+      "category": "Space",
+      "prompt": "What do astronauts wear to go outside their spacecraft?",
+      "choices": ["A raincoat", "A spacesuit", "A wetsuit", "A tuxedo"],
+      "answer": 1
+    },
+    {
+      "id": "dinosaurs-01",
+      "category": "Dinosaurs",
+      "prompt": "What does the word dinosaur roughly mean?",
+      "choices": ["Big bird", "Old dragon", "Terrible lizard", "Giant tooth"],
+      "answer": 2
+    },
+    {
+      "id": "dinosaurs-02",
+      "category": "Dinosaurs",
+      "prompt": "Which dinosaur had three horns on its face?",
+      "choices": ["Stegosaurus", "Velociraptor", "Brachiosaurus", "Triceratops"],
+      "answer": 3
+    },
+    {
+      "id": "dinosaurs-03",
+      "category": "Dinosaurs",
+      "prompt": "Which dinosaur had big plates on its back and spikes on its tail?",
+      "choices": ["Stegosaurus", "Triceratops", "T. rex", "Diplodocus"],
+      "answer": 0
+    },
+    {
+      "id": "dinosaurs-04",
+      "category": "Dinosaurs",
+      "prompt": "What are scientists who study fossils called?",
+      "choices": ["Astronomers", "Paleontologists", "Botanists", "Chemists"],
+      "answer": 1
+    },
+    {
+      "id": "dinosaurs-05",
+      "category": "Dinosaurs",
+      "prompt": "Which animals alive today are the closest relatives of dinosaurs?",
+      "choices": ["Frogs", "Cats", "Birds", "Sharks"],
+      "answer": 2
+    },
+    {
+      "id": "dinosaurs-06",
+      "category": "Dinosaurs",
+      "prompt": "What did the long-necked Brachiosaurus eat?",
+      "choices": ["Meat", "Fish", "Insects", "Plants"],
+      "answer": 3
+    },
+    {
+      "id": "dinosaurs-07",
+      "category": "Dinosaurs",
+      "prompt": "Tyrannosaurus rex is famous for having very short what?",
+      "choices": ["Arms", "Legs", "Tail", "Teeth"],
+      "answer": 0
+    },
+    {
+      "id": "nature-01",
+      "category": "Nature",
+      "prompt": "Plants make their own food from water, air and what?",
+      "choices": ["Sand", "Sunlight", "Music", "Milk"],
+      "answer": 1
+    },
+    {
+      "id": "nature-02",
+      "category": "Nature",
+      "prompt": "Which gas do plants give off that we need to breathe?",
+      "choices": ["Helium", "Neon", "Oxygen", "Hydrogen"],
+      "answer": 2
+    },
+    {
+      "id": "nature-03",
+      "category": "Nature",
+      "prompt": "Which kind of tree grows the tallest in the world?",
+      "choices": ["Oak", "Palm", "Maple", "Redwood"],
+      "answer": 3
+    },
+    {
+      "id": "nature-04",
+      "category": "Nature",
+      "prompt": "What do you call a young tree?",
+      "choices": ["Sapling", "Stump", "Bud", "Log"],
+      "answer": 0
+    },
+    {
+      "id": "nature-05",
+      "category": "Nature",
+      "prompt": "How many colors are in a rainbow?",
+      "choices": ["Five", "Seven", "Six", "Nine"],
+      "answer": 1
+    },
+    {
+      "id": "nature-06",
+      "category": "Nature",
+      "prompt": "What is frozen water called?",
+      "choices": ["Steam", "Fog", "Ice", "Dew"],
+      "answer": 2
+    },
+    {
+      "id": "nature-07",
+      "category": "Nature",
+      "prompt": "Which season comes right after winter?",
+      "choices": ["Summer", "Autumn", "Winter again", "Spring"],
+      "answer": 3
+    },
+    {
+      "id": "nature-08",
+      "category": "Nature",
+      "prompt": "What is the largest hot desert in the world?",
+      "choices": ["Sahara", "Gobi", "Mojave", "Kalahari"],
+      "answer": 0
+    },
+    {
+      "id": "nature-09",
+      "category": "Nature",
+      "prompt": "What do you call a mountain that can erupt with lava?",
+      "choices": ["Glacier", "Volcano", "Canyon", "Valley"],
+      "answer": 1
+    },
+    {
+      "id": "nature-10",
+      "category": "Nature",
+      "prompt": "Which tool helps you find which way is north?",
+      "choices": ["Thermometer", "Ruler", "Compass", "Telescope"],
+      "answer": 2
+    },
+    {
+      "id": "nature-11",
+      "category": "Nature",
+      "prompt": "Which tree do acorns grow on?",
+      "choices": ["Pine", "Apple", "Palm", "Oak"],
+      "answer": 3
+    },
+    {
+      "id": "nature-12",
+      "category": "Nature",
+      "prompt": "What sound follows a flash of lightning?",
+      "choices": ["Thunder", "A whistle", "Birdsong", "A doorbell"],
+      "answer": 0
+    },
+    {
+      "id": "geography-01",
+      "category": "Geography",
+      "prompt": "What is the largest continent?",
+      "choices": ["Africa", "Asia", "North America", "Europe"],
+      "answer": 1
+    },
+    {
+      "id": "geography-02",
+      "category": "Geography",
+      "prompt": "What is the capital city of France?",
+      "choices": ["Rome", "Madrid", "Paris", "Berlin"],
+      "answer": 2
+    },
+    {
+      "id": "geography-03",
+      "category": "Geography",
+      "prompt": "In which country are the Pyramids of Giza?",
+      "choices": ["Mexico", "Peru", "India", "Egypt"],
+      "answer": 3
+    },
+    {
+      "id": "geography-04",
+      "category": "Geography",
+      "prompt": "Which country is shaped like a boot?",
+      "choices": ["Italy", "Spain", "Greece", "Chile"],
+      "answer": 0
+    },
+    {
+      "id": "geography-05",
+      "category": "Geography",
+      "prompt": "What is the tallest mountain on Earth?",
+      "choices": ["K2", "Mount Everest", "Kilimanjaro", "Mont Blanc"],
+      "answer": 1
+    },
+    {
+      "id": "geography-06",
+      "category": "Geography",
+      "prompt": "In which country do kangaroos live in the wild?",
+      "choices": ["Brazil", "Canada", "Australia", "Norway"],
+      "answer": 2
+    },
+    {
+      "id": "geography-07",
+      "category": "Geography",
+      "prompt": "What is the capital city of Japan?",
+      "choices": ["Kyoto", "Osaka", "Seoul", "Tokyo"],
+      "answer": 3
+    },
+    {
+      "id": "geography-08",
+      "category": "Geography",
+      "prompt": "How many continents are there?",
+      "choices": ["Seven", "Five", "Six", "Eight"],
+      "answer": 0
+    },
+    {
+      "id": "geography-09",
+      "category": "Geography",
+      "prompt": "Which country is famous for the Great Wall?",
+      "choices": ["India", "China", "Japan", "Russia"],
+      "answer": 1
+    },
+    {
+      "id": "geography-10",
+      "category": "Geography",
+      "prompt": "What is the capital of the United States?",
+      "choices": ["New York City", "Los Angeles", "Washington, D.C.", "Chicago"],
+      "answer": 2
+    },
+    {
+      "id": "geography-11",
+      "category": "Geography",
+      "prompt": "Which continent is the coldest?",
+      "choices": ["Europe", "Asia", "North America", "Antarctica"],
+      "answer": 3
+    },
+    {
+      "id": "geography-12",
+      "category": "Geography",
+      "prompt": "The famous clock tower Big Ben is in which city?",
+      "choices": ["London", "Paris", "Dublin", "New York"],
+      "answer": 0
+    },
+    {
+      "id": "geography-13",
+      "category": "Geography",
+      "prompt": "The Statue of Liberty stands in which city?",
+      "choices": ["Boston", "New York City", "Paris", "Chicago"],
+      "answer": 1
+    },
+    {
+      "id": "geography-14",
+      "category": "Geography",
+      "prompt": "What is the capital city of Canada?",
+      "choices": ["Toronto", "Vancouver", "Ottawa", "Montreal"],
+      "answer": 2
+    },
+    {
+      "id": "geography-15",
+      "category": "Geography",
+      "prompt": "Which ocean lies between Africa and Australia?",
+      "choices": ["Atlantic Ocean", "Pacific Ocean", "Arctic Ocean", "Indian Ocean"],
+      "answer": 3
+    },
+    {
+      "id": "science-01",
+      "category": "Science",
+      "prompt": "What is H2O better known as?",
+      "choices": ["Water", "Salt", "Air", "Sugar"],
+      "answer": 0
+    },
+    {
+      "id": "science-02",
+      "category": "Science",
+      "prompt": "At what temperature does water freeze in Celsius?",
+      "choices": ["10°C", "0°C", "32°C", "100°C"],
+      "answer": 1
+    },
+    {
+      "id": "science-03",
+      "category": "Science",
+      "prompt": "Which force keeps our feet on the ground?",
+      "choices": ["Magnetism", "Friction", "Gravity", "Wind"],
+      "answer": 2
+    },
+    {
+      "id": "science-04",
+      "category": "Science",
+      "prompt": "Which of these is a gas?",
+      "choices": ["Ice", "Rock", "Milk", "Steam"],
+      "answer": 3
+    },
+    {
+      "id": "science-05",
+      "category": "Science",
+      "prompt": "Which material does a magnet pull on?",
+      "choices": ["Iron", "Wood", "Plastic", "Glass"],
+      "answer": 0
+    },
+    {
+      "id": "science-06",
+      "category": "Science",
+      "prompt": "What is the closest star to Earth?",
+      "choices": ["Polaris", "The Sun", "Sirius", "Alpha Centauri"],
+      "answer": 1
+    },
+    {
+      "id": "science-07",
+      "category": "Science",
+      "prompt": "At what temperature does water boil at sea level in Celsius?",
+      "choices": ["50°C", "80°C", "100°C", "212°C"],
+      "answer": 2
+    },
+    {
+      "id": "science-08",
+      "category": "Science",
+      "prompt": "What tool do scientists use to see tiny things up close?",
+      "choices": ["Telescope", "Periscope", "Stethoscope", "Microscope"],
+      "answer": 3
+    },
+    {
+      "id": "science-09",
+      "category": "Science",
+      "prompt": "What are animals that eat only plants called?",
+      "choices": ["Herbivores", "Carnivores", "Omnivores", "Insectivores"],
+      "answer": 0
+    },
+    {
+      "id": "science-10",
+      "category": "Science",
+      "prompt": "Which travels faster, light or sound?",
+      "choices": ["Sound", "Light", "They tie", "Neither moves"],
+      "answer": 1
+    },
+    {
+      "id": "science-11",
+      "category": "Science",
+      "prompt": "What is the center of an atom called?",
+      "choices": ["Electron", "Shell", "Nucleus", "Orbit"],
+      "answer": 2
+    },
+    {
+      "id": "science-12",
+      "category": "Science",
+      "prompt": "Who is said to have thought about gravity after seeing an apple fall?",
+      "choices": ["Albert Einstein", "Galileo Galilei", "Thomas Edison", "Isaac Newton"],
+      "answer": 3
+    },
+    {
+      "id": "science-13",
+      "category": "Science",
+      "prompt": "Which of these is a mammal?",
+      "choices": ["Whale", "Shark", "Eagle", "Lizard"],
+      "answer": 0
+    },
+    {
+      "id": "human-body-01",
+      "category": "Human Body",
+      "prompt": "How many bones are in an adult human body?",
+      "choices": ["106", "206", "306", "150"],
+      "answer": 1
+    },
+    {
+      "id": "human-body-02",
+      "category": "Human Body",
+      "prompt": "What is the largest organ of the human body?",
+      "choices": ["Heart", "Liver", "Skin", "Brain"],
+      "answer": 2
+    },
+    {
+      "id": "human-body-03",
+      "category": "Human Body",
+      "prompt": "Which organ pumps blood around your body?",
+      "choices": ["Lungs", "Stomach", "Kidneys", "Heart"],
+      "answer": 3
+    },
+    {
+      "id": "human-body-04",
+      "category": "Human Body",
+      "prompt": "How many baby teeth do children usually have?",
+      "choices": ["20", "10", "32", "50"],
+      "answer": 0
+    },
+    {
+      "id": "human-body-05",
+      "category": "Human Body",
+      "prompt": "Which organs help you breathe?",
+      "choices": ["Liver", "Lungs", "Kidneys", "Bones"],
+      "answer": 1
+    },
+    {
+      "id": "human-body-06",
+      "category": "Human Body",
+      "prompt": "What is the colored part of your eye called?",
+      "choices": ["Pupil", "Lens", "Iris", "Eyelash"],
+      "answer": 2
+    },
+    {
+      "id": "human-body-07",
+      "category": "Human Body",
+      "prompt": "Which sense do you use with your nose?",
+      "choices": ["Taste", "Touch", "Hearing", "Smell"],
+      "answer": 3
+    },
+    {
+      "id": "human-body-08",
+      "category": "Human Body",
+      "prompt": "Where is the smallest bone in your body?",
+      "choices": ["In the ear", "In the nose", "In the toe", "In the finger"],
+      "answer": 0
+    },
+    {
+      "id": "human-body-09",
+      "category": "Human Body",
+      "prompt": "What is the hardest material in the human body?",
+      "choices": ["Bone", "Tooth enamel", "Fingernail", "Hair"],
+      "answer": 1
+    },
+    {
+      "id": "food-01",
+      "category": "Food",
+      "prompt": "Which fruit is said to keep the doctor away if you eat one a day?",
+      "choices": ["Banana", "Grape", "Apple", "Pear"],
+      "answer": 2
+    },
+    {
+      "id": "food-02",
+      "category": "Food",
+      "prompt": "What is guacamole mostly made from?",
+      "choices": ["Peas", "Cucumber", "Lime", "Avocado"],
+      "answer": 3
+    },
+    {
+      "id": "food-03",
+      "category": "Food",
+      "prompt": "Which vegetable are French fries made from?",
+      "choices": ["Potato", "Carrot", "Onion", "Turnip"],
+      "answer": 0
+    },
+    {
+      "id": "food-04",
+      "category": "Food",
+      "prompt": "Pasta is a traditional food from which country?",
+      "choices": ["Japan", "Italy", "Mexico", "Sweden"],
+      "answer": 1
+    },
+    {
+      "id": "food-05",
+      "category": "Food",
+      "prompt": "What is popcorn made from?",
+      "choices": ["Rice", "Wheat", "Corn", "Oats"],
+      "answer": 2
+    },
+    {
+      "id": "food-06",
+      "category": "Food",
+      "prompt": "Which fruit is yellow, curved and peeled before eating?",
+      "choices": ["Lemon", "Mango", "Pineapple", "Banana"],
+      "answer": 3
+    },
+    {
+      "id": "food-07",
+      "category": "Food",
+      "prompt": "Sushi comes from which country?",
+      "choices": ["Japan", "China", "Thailand", "Brazil"],
+      "answer": 0
+    },
+    {
+      "id": "food-08",
+      "category": "Food",
+      "prompt": "What do you get when you shake or churn cream for a long time?",
+      "choices": ["Cheese", "Butter", "Yogurt", "Ice cubes"],
+      "answer": 1
+    },
+    {
+      "id": "food-09",
+      "category": "Food",
+      "prompt": "Which red berry has its seeds on the outside?",
+      "choices": ["Raspberry", "Cherry", "Strawberry", "Cranberry"],
+      "answer": 2
+    },
+    {
+      "id": "food-10",
+      "category": "Food",
+      "prompt": "What makes bread dough rise?",
+      "choices": ["Salt", "Pepper", "Butter", "Yeast"],
+      "answer": 3
+    },
+    {
+      "id": "food-11",
+      "category": "Food",
+      "prompt": "Which vegetable do cartoon rabbits love to munch?",
+      "choices": ["Carrot", "Broccoli", "Corn", "Celery"],
+      "answer": 0
+    },
+    {
+      "id": "food-12",
+      "category": "Food",
+      "prompt": "Chocolate is made from the beans of which plant?",
+      "choices": ["Coffee", "Cacao", "Vanilla", "Soy"],
+      "answer": 1
+    },
+    {
+      "id": "food-13",
+      "category": "Food",
+      "prompt": "Which nut is used to make marzipan?",
+      "choices": ["Peanut", "Walnut", "Almond", "Cashew"],
+      "answer": 2
+    },
+    {
+      "id": "sports-games-01",
+      "category": "Sports & Games",
+      "prompt": "How many players does a soccer team have on the field?",
+      "choices": ["9", "10", "12", "11"],
+      "answer": 3
+    },
+    {
+      "id": "sports-games-02",
+      "category": "Sports & Games",
+      "prompt": "In which sport do players score a touchdown?",
+      "choices": ["American football", "Basketball", "Tennis", "Baseball"],
+      "answer": 0
+    },
+    {
+      "id": "sports-games-03",
+      "category": "Sports & Games",
+      "prompt": "How many rings are on the Olympic flag?",
+      "choices": ["Four", "Five", "Six", "Seven"],
+      "answer": 1
+    },
+    {
+      "id": "sports-games-04",
+      "category": "Sports & Games",
+      "prompt": "Which sport uses a feathery shuttlecock?",
+      "choices": ["Tennis", "Squash", "Badminton", "Volleyball"],
+      "answer": 2
+    },
+    {
+      "id": "sports-games-05",
+      "category": "Sports & Games",
+      "prompt": "How many squares are on a chessboard?",
+      "choices": ["32", "48", "100", "64"],
+      "answer": 3
+    },
+    {
+      "id": "sports-games-06",
+      "category": "Sports & Games",
+      "prompt": "Which chess piece only moves diagonally?",
+      "choices": ["Bishop", "Rook", "Knight", "King"],
+      "answer": 0
+    },
+    {
+      "id": "sports-games-07",
+      "category": "Sports & Games",
+      "prompt": "In tennis, which word means a score of zero?",
+      "choices": ["Nil", "Love", "Zip", "Duck"],
+      "answer": 1
+    },
+    {
+      "id": "sports-games-08",
+      "category": "Sports & Games",
+      "prompt": "How many holes are on a standard golf course?",
+      "choices": ["9", "12", "18", "24"],
+      "answer": 2
+    },
+    {
+      "id": "sports-games-09",
+      "category": "Sports & Games",
+      "prompt": "What color is the very center of an archery target?",
+      "choices": ["Red", "Blue", "Black", "Gold"],
+      "answer": 3
+    },
+    {
+      "id": "sports-games-10",
+      "category": "Sports & Games",
+      "prompt": "Which sport is played at Wimbledon?",
+      "choices": ["Tennis", "Golf", "Cricket", "Rugby"],
+      "answer": 0
+    },
+    {
+      "id": "sports-games-11",
+      "category": "Sports & Games",
+      "prompt": "How many sides does a regular game die have?",
+      "choices": ["Four", "Six", "Eight", "Twelve"],
+      "answer": 1
+    },
+    {
+      "id": "sports-games-12",
+      "category": "Sports & Games",
+      "prompt": "In basketball, how many points is a shot from inside the three-point line?",
+      "choices": ["1", "3", "2", "4"],
+      "answer": 2
+    },
+    {
+      "id": "music-art-01",
+      "category": "Music & Art",
+      "prompt": "How many keys does a standard piano have?",
+      "choices": ["66", "76", "100", "88"],
+      "answer": 3
+    },
+    {
+      "id": "music-art-02",
+      "category": "Music & Art",
+      "prompt": "How many strings does a regular guitar have?",
+      "choices": ["Six", "Four", "Five", "Eight"],
+      "answer": 0
+    },
+    {
+      "id": "music-art-03",
+      "category": "Music & Art",
+      "prompt": "Who painted the Mona Lisa?",
+      "choices": ["Pablo Picasso", "Leonardo da Vinci", "Vincent van Gogh", "Claude Monet"],
+      "answer": 1
+    },
+    {
+      "id": "music-art-04",
+      "category": "Music & Art",
+      "prompt": "Which instrument has black and white keys?",
+      "choices": ["Violin", "Trumpet", "Piano", "Drum"],
+      "answer": 2
+    },
+    {
+      "id": "music-art-05",
+      "category": "Music & Art",
+      "prompt": "Which two colors mix to make orange?",
+      "choices": ["Blue and yellow", "Red and blue", "Black and white", "Red and yellow"],
+      "answer": 3
+    },
+    {
+      "id": "music-art-06",
+      "category": "Music & Art",
+      "prompt": "Which two colors mix to make green?",
+      "choices": ["Blue and yellow", "Red and yellow", "Red and blue", "Pink and white"],
+      "answer": 0
+    },
+    {
+      "id": "music-art-07",
+      "category": "Music & Art",
+      "prompt": "Which of these instruments do you blow into?",
+      "choices": ["Piano", "Flute", "Violin", "Drum"],
+      "answer": 1
+    },
+    {
+      "id": "music-art-08",
+      "category": "Music & Art",
+      "prompt": "How many musicians play in a quartet?",
+      "choices": ["Two", "Three", "Four", "Five"],
+      "answer": 2
+    },
+    {
+      "id": "music-art-09",
+      "category": "Music & Art",
+      "prompt": "Which painter made the famous picture The Starry Night?",
+      "choices": ["Leonardo da Vinci", "Frida Kahlo", "Rembrandt", "Vincent van Gogh"],
+      "answer": 3
+    },
+    {
+      "id": "music-art-10",
+      "category": "Music & Art",
+      "prompt": "What do you call the person who leads an orchestra?",
+      "choices": ["Conductor", "Composer", "Soloist", "Usher"],
+      "answer": 0
+    },
+    {
+      "id": "music-art-11",
+      "category": "Music & Art",
+      "prompt": "What is a painting of a person's face called?",
+      "choices": ["Landscape", "Portrait", "Sculpture", "Mosaic"],
+      "answer": 1
+    },
+    {
+      "id": "music-art-12",
+      "category": "Music & Art",
+      "prompt": "Which color do you get by mixing red and white?",
+      "choices": ["Purple", "Orange", "Pink", "Brown"],
+      "answer": 2
+    },
+    {
+      "id": "numbers-shapes-01",
+      "category": "Numbers & Shapes",
+      "prompt": "How many sides does a triangle have?",
+      "choices": ["4", "5", "6", "3"],
+      "answer": 3
+    },
+    {
+      "id": "numbers-shapes-02",
+      "category": "Numbers & Shapes",
+      "prompt": "What is 7 times 8?",
+      "choices": ["56", "54", "48", "64"],
+      "answer": 0
+    },
+    {
+      "id": "numbers-shapes-03",
+      "category": "Numbers & Shapes",
+      "prompt": "How many minutes are in an hour?",
+      "choices": ["30", "60", "100", "90"],
+      "answer": 1
+    },
+    {
+      "id": "numbers-shapes-04",
+      "category": "Numbers & Shapes",
+      "prompt": "What do you call a shape with eight sides?",
+      "choices": ["Hexagon", "Pentagon", "Octagon", "Decagon"],
+      "answer": 2
+    },
+    {
+      "id": "numbers-shapes-05",
+      "category": "Numbers & Shapes",
+      "prompt": "How many days are in a leap year?",
+      "choices": ["365", "364", "360", "366"],
+      "answer": 3
+    },
+    {
+      "id": "numbers-shapes-06",
+      "category": "Numbers & Shapes",
+      "prompt": "What is half of 50?",
+      "choices": ["25", "20", "15", "30"],
+      "answer": 0
+    },
+    {
+      "id": "numbers-shapes-07",
+      "category": "Numbers & Shapes",
+      "prompt": "How many hours are in one day?",
+      "choices": ["12", "24", "20", "36"],
+      "answer": 1
+    },
+    {
+      "id": "numbers-shapes-08",
+      "category": "Numbers & Shapes",
+      "prompt": "What is the Roman numeral for 10?",
+      "choices": ["V", "L", "X", "C"],
+      "answer": 2
+    },
+    {
+      "id": "numbers-shapes-09",
+      "category": "Numbers & Shapes",
+      "prompt": "How many sides does a hexagon have?",
+      "choices": ["Five", "Seven", "Eight", "Six"],
+      "answer": 3
+    },
+    {
+      "id": "numbers-shapes-10",
+      "category": "Numbers & Shapes",
+      "prompt": "What is 12 plus 15?",
+      "choices": ["27", "25", "28", "32"],
+      "answer": 0
+    },
+    {
+      "id": "numbers-shapes-11",
+      "category": "Numbers & Shapes",
+      "prompt": "How many weeks are in a year?",
+      "choices": ["48", "52", "50", "56"],
+      "answer": 1
+    },
+    {
+      "id": "numbers-shapes-12",
+      "category": "Numbers & Shapes",
+      "prompt": "What number comes next: 2, 4, 6, 8, ...?",
+      "choices": ["9", "12", "10", "11"],
+      "answer": 2
+    },
+    {
+      "id": "numbers-shapes-13",
+      "category": "Numbers & Shapes",
+      "prompt": "How many zeros are in one million?",
+      "choices": ["Five", "Seven", "Nine", "Six"],
+      "answer": 3
+    },
+    {
+      "id": "numbers-shapes-14",
+      "category": "Numbers & Shapes",
+      "prompt": "How many eggs are in a dozen?",
+      "choices": ["12", "10", "6", "20"],
+      "answer": 0
+    },
+    {
+      "id": "numbers-shapes-15",
+      "category": "Numbers & Shapes",
+      "prompt": "How many wheels does a tricycle have?",
+      "choices": ["Two", "Three", "Four", "Five"],
+      "answer": 1
+    },
+    {
+      "id": "words-01",
+      "category": "Words",
+      "prompt": "What is the opposite of hot?",
+      "choices": ["Warm", "Spicy", "Cold", "Sunny"],
+      "answer": 2
+    },
+    {
+      "id": "words-02",
+      "category": "Words",
+      "prompt": "How many letters are in the English alphabet?",
+      "choices": ["24", "25", "28", "26"],
+      "answer": 3
+    },
+    {
+      "id": "words-03",
+      "category": "Words",
+      "prompt": "Which word rhymes with cat?",
+      "choices": ["Hat", "Dog", "Cup", "Sun"],
+      "answer": 0
+    },
+    {
+      "id": "words-04",
+      "category": "Words",
+      "prompt": "What is the plural of mouse?",
+      "choices": ["Mouses", "Mice", "Moose", "Meese"],
+      "answer": 1
+    },
+    {
+      "id": "words-05",
+      "category": "Words",
+      "prompt": "Which letter comes right after Q?",
+      "choices": ["P", "S", "R", "T"],
+      "answer": 2
+    },
+    {
+      "id": "words-06",
+      "category": "Words",
+      "prompt": "Hola means hello in which language?",
+      "choices": ["French", "Italian", "German", "Spanish"],
+      "answer": 3
+    },
+    {
+      "id": "words-07",
+      "category": "Words",
+      "prompt": "Bonjour means hello in which language?",
+      "choices": ["French", "Spanish", "Portuguese", "Dutch"],
+      "answer": 0
+    },
+    {
+      "id": "words-08",
+      "category": "Words",
+      "prompt": "A word that means the same as another word is called a what?",
+      "choices": ["Antonym", "Synonym", "Acronym", "Homonym"],
+      "answer": 1
+    },
+    {
+      "id": "words-09",
+      "category": "Words",
+      "prompt": "Which of these letters is a vowel?",
+      "choices": ["B", "K", "E", "T"],
+      "answer": 2
+    },
+    {
+      "id": "words-10",
+      "category": "Words",
+      "prompt": "What do you call a word that names a person, place or thing?",
+      "choices": ["Verb", "Adjective", "Adverb", "Noun"],
+      "answer": 3
+    },
+    {
+      "id": "history-01",
+      "category": "History",
+      "prompt": "Which brothers flew the first powered airplane in 1903?",
+      "choices": [
+        "The Wright brothers",
+        "The Grimm brothers",
+        "The Marx brothers",
+        "The Jonas Brothers"
+      ],
+      "answer": 0
+    },
+    {
+      "id": "history-02",
+      "category": "History",
+      "prompt": "Ancient Egyptians wrote with picture symbols called what?",
+      "choices": ["Emojis", "Hieroglyphs", "Runes", "Doodles"],
+      "answer": 1
+    },
+    {
+      "id": "history-03",
+      "category": "History",
+      "prompt": "Which ancient people built the Colosseum?",
+      "choices": ["The Greeks", "The Vikings", "The Romans", "The Aztecs"],
+      "answer": 2
+    },
+    {
+      "id": "history-04",
+      "category": "History",
+      "prompt": "Before electric lights, what did people often use to see at night?",
+      "choices": ["Flashlights", "Lasers", "Glow sticks", "Candles"],
+      "answer": 3
+    },
+    {
+      "id": "history-05",
+      "category": "History",
+      "prompt": "Who was the first President of the United States?",
+      "choices": ["George Washington", "Abraham Lincoln", "Thomas Jefferson", "John Adams"],
+      "answer": 0
+    },
+    {
+      "id": "history-06",
+      "category": "History",
+      "prompt": "What is the water-filled ditch around a castle called?",
+      "choices": ["A turret", "A moat", "A drawbridge", "A tower"],
+      "answer": 1
+    },
+    {
+      "id": "history-07",
+      "category": "History",
+      "prompt": "In which country did the ancient Olympic Games begin?",
+      "choices": ["Italy", "Egypt", "Greece", "China"],
+      "answer": 2
+    },
+    {
+      "id": "history-08",
+      "category": "History",
+      "prompt": "What did Johannes Gutenberg build around 1440?",
+      "choices": ["A telescope", "A bicycle", "A piano", "A printing press"],
+      "answer": 3
+    },
+    {
+      "id": "history-09",
+      "category": "History",
+      "prompt": "Which animal did ancient Egyptians often show in their art and treasure?",
+      "choices": ["Cats", "Penguins", "Kangaroos", "Pandas"],
+      "answer": 0
+    },
+    {
+      "id": "stories-fun-01",
+      "category": "Stories & Fun",
+      "prompt": "Which fairy-tale girl lost a glass slipper at the ball?",
+      "choices": ["Snow White", "Cinderella", "Rapunzel", "Goldilocks"],
+      "answer": 1
+    },
+    {
+      "id": "stories-fun-02",
+      "category": "Stories & Fun",
+      "prompt": "In the fairy tale, what did Jack climb?",
+      "choices": ["A rainbow", "A ladder", "A beanstalk", "A palm tree"],
+      "answer": 2
+    },
+    {
+      "id": "stories-fun-03",
+      "category": "Stories & Fun",
+      "prompt": "Goldilocks visited the house of how many bears?",
+      "choices": ["Two", "Four", "Seven", "Three"],
+      "answer": 3
+    },
+    {
+      "id": "stories-fun-04",
+      "category": "Stories & Fun",
+      "prompt": "Which boy never grows up and lives in Neverland?",
+      "choices": ["Peter Pan", "Pinocchio", "Aladdin", "Robin Hood"],
+      "answer": 0
+    },
+    {
+      "id": "stories-fun-05",
+      "category": "Stories & Fun",
+      "prompt": "What happened to Pinocchio's nose when he told a fib?",
+      "choices": ["It sneezed", "It grew longer", "It glowed", "It turned blue"],
+      "answer": 1
+    },
+    {
+      "id": "stories-fun-06",
+      "category": "Stories & Fun",
+      "prompt": "Who wins the race in the fable of the tortoise and the hare?",
+      "choices": ["The hare", "It was a tie", "The tortoise", "Nobody raced"],
+      "answer": 2
+    },
+    {
+      "id": "stories-fun-07",
+      "category": "Stories & Fun",
+      "prompt": "What do you call a house built from blocks of snow and ice?",
+      "choices": ["Hut", "Tepee", "Cabin", "Igloo"],
+      "answer": 3
+    },
+    {
+      "id": "stories-fun-08",
+      "category": "Stories & Fun",
+      "prompt": "Which toy goes up and down on a string?",
+      "choices": ["Yo-yo", "Kite", "Frisbee", "Jump rope"],
+      "answer": 0
+    },
+    {
+      "id": "stories-fun-09",
+      "category": "Stories & Fun",
+      "prompt": "In the nursery rhyme, who sat on a wall and had a great fall?",
+      "choices": ["Little Bo Peep", "Humpty Dumpty", "Jack Sprat", "Old King Cole"],
+      "answer": 1
+    },
+    {
+      "id": "stories-fun-10",
+      "category": "Stories & Fun",
+      "prompt": "How many little pigs built houses in the story?",
+      "choices": ["Two", "Four", "Three", "Five"],
+      "answer": 2
+    }
+  ]
+}

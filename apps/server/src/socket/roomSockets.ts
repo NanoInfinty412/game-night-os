@@ -2,6 +2,7 @@ import type { FastifyBaseLogger } from 'fastify';
 import { Server, type Socket } from 'socket.io';
 import { ZodError } from 'zod';
 import {
+  answerRequestSchema,
   joinRequestSchema,
   resumeRequestSchema,
   type Ack,
@@ -60,9 +61,68 @@ export function registerRoomSockets(
   const hostSockets = new Map<string, string>();
   const playerSockets = new Map<string, string>();
   const graceTimers = new Map<string, ReturnType<typeof setTimeout>>();
+  const gameTimers = new Map<string, ReturnType<typeof setTimeout>>();
 
+  /** Sends the room to every screen in it, then makes sure its game clock is armed. */
   function broadcast(room: Room) {
-    io.to(channel(room.code)).emit('room:state', rooms.snapshot(room));
+    io.to(channel(room.code)).emit('room:state', rooms.snapshot(room, now()));
+    scheduleGame(room);
+  }
+
+  function clearGameTimer(code: string) {
+    clearTimeout(gameTimers.get(code));
+    gameTimers.delete(code);
+  }
+
+  /** Wakes up at the room's next deadline (question closes, reveal ends) and moves the game on. */
+  function scheduleGame(room: Room) {
+    clearGameTimer(room.code);
+    const deadline = rooms.nextDeadline(room);
+    if (deadline === undefined) return;
+    gameTimers.set(
+      room.code,
+      setTimeout(
+        () => {
+          gameTimers.delete(room.code);
+          let current: Room;
+          try {
+            current = rooms.getRoom(room.code);
+          } catch {
+            return; // Room swept.
+          }
+          if (rooms.tick(current, now())) broadcast(current);
+          else scheduleGame(current);
+        },
+        Math.max(deadline - now(), 1),
+      ),
+    );
+  }
+
+  function scheduleGrace(code: string, playerId: string) {
+    cancelGrace(playerId);
+    graceTimers.set(
+      playerId,
+      setTimeout(() => {
+        graceTimers.delete(playerId);
+        const room = rooms.getRoomOrUndefined(code);
+        // Mid-game, a dropped phone keeps its seat and score; the lobby gets a fresh grace period.
+        if (!room || room.phase !== 'LOBBY') return;
+        broadcast(rooms.removePlayer(code, playerId, now())!);
+      }, options.lobbyGraceMs),
+    );
+  }
+
+  /** Back in the lobby: anyone who dropped out during the game gets a grace period from now. */
+  function graceForDisconnected(room: Room) {
+    for (const p of room.players) if (!p.connected) scheduleGrace(room.code, p.id);
+  }
+
+  function playerOf(socket: GameSocket) {
+    const { roomCode, role, playerId } = socket.data;
+    if (role !== 'player' || !roomCode || !playerId) {
+      throw new GameError('NOT_IN_ROOM', 'You are not in a room.');
+    }
+    return { roomCode, playerId };
   }
 
   function cancelGrace(playerId: string) {
@@ -159,15 +219,39 @@ export function registerRoomSockets(
 
     socket.on('player:leave', (ack) =>
       handle(socket, ack, () => {
-        const { roomCode, role, playerId } = socket.data;
-        if (role !== 'player' || !roomCode || !playerId) {
-          throw new GameError('NOT_IN_ROOM', 'You are not in a room.');
-        }
+        const { roomCode, playerId } = playerOf(socket);
         cancelGrace(playerId);
         playerSockets.delete(playerId);
         detach(socket);
         const room = rooms.removePlayer(roomCode, playerId, now());
         if (room) broadcast(room);
+        return null;
+      }),
+    );
+
+    socket.on('game:start', (ack) =>
+      handle(socket, ack, () => {
+        const { roomCode, playerId } = playerOf(socket);
+        broadcast(rooms.startGame(roomCode, playerId, now()));
+        return null;
+      }),
+    );
+
+    socket.on('game:answer', (payload, ack) =>
+      handle(socket, ack, () => {
+        const { roomCode, playerId } = playerOf(socket);
+        const { round, choice } = answerRequestSchema.parse(payload);
+        broadcast(rooms.answer(roomCode, playerId, round, choice, now()));
+        return null;
+      }),
+    );
+
+    socket.on('game:next', (ack) =>
+      handle(socket, ack, () => {
+        const { roomCode, playerId } = playerOf(socket);
+        const room = rooms.next(roomCode, playerId, now());
+        if (room.phase === 'LOBBY') graceForDisconnected(room);
+        broadcast(room);
         return null;
       }),
     );
@@ -181,22 +265,15 @@ export function registerRoomSockets(
       } else if (role === 'player' && playerId && playerSockets.get(playerId) === socket.id) {
         playerSockets.delete(playerId);
         rooms.setPlayerConnected(roomCode, playerId, false, now());
-        graceTimers.set(
-          playerId,
-          setTimeout(() => {
-            graceTimers.delete(playerId);
-            const room = rooms.removePlayer(roomCode, playerId, now());
-            if (room) broadcast(room);
-          }, options.lobbyGraceMs),
-        );
+        scheduleGrace(roomCode, playerId);
       } else {
         return;
       }
-      try {
-        broadcast(rooms.getRoom(roomCode));
-      } catch {
-        // Room already swept.
-      }
+      const room = rooms.getRoomOrUndefined(roomCode);
+      if (!room) return; // Already swept.
+      // Everyone left who is still connected may have answered already.
+      rooms.tick(room, now());
+      broadcast(room);
     });
   });
 
@@ -205,13 +282,15 @@ export function registerRoomSockets(
       io.to(channel(code)).emit('room:closed');
       io.in(channel(code)).socketsLeave(channel(code));
       hostSockets.delete(code);
+      clearGameTimer(code);
     }
   }, options.sweepIntervalMs);
   sweeper.unref();
 
   return () => {
     clearInterval(sweeper);
-    for (const timer of graceTimers.values()) clearTimeout(timer);
+    for (const timer of [...graceTimers.values(), ...gameTimers.values()]) clearTimeout(timer);
     graceTimers.clear();
+    gameTimers.clear();
   };
 }
