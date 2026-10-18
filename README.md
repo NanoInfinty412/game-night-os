@@ -16,7 +16,11 @@ pnpm dev
   On Windows, find the IP with `ipconfig` and allow Node through the firewall on private networks if asked.
   The QR code uses the address the TV page was opened with, so open `/tv` via the LAN IP (not `localhost`) when testing with phones.
 
-Status: milestone 3. Trivia Chaos is playable: the VIP starts from their phone, everyone answers on their phone, the TV shows questions, reveals and a podium. For a quick playtest run the server with `QUESTION_SECONDS=8`.
+**Playing at home on Windows and Android TV?** Double-click `start-game.cmd` and follow [docs/PLAYTEST.md](docs/PLAYTEST.md).
+
+Status: the Party Pack is playable with eight games (Party Mix, Trivia Chaos, Category Clash, Lightning Round, Quick Draw, Tap Frenzy, Closest Wins, Emoji Riddles). The TV or the VIP's phone picks the game; everyone plays on their phone. An Android TV app lives in `apps/android-tv`. For a quick playtest run the server with `QUESTION_SECONDS=8`.
+
+Production build (one port, 3000, for TVs and phones): `pnpm build && pnpm start`, then open `http://<LAN IP>:3000/tv`.
 
 If `pnpm` isn't recognized on Windows after `npm install -g pnpm`, run the same commands as `npx pnpm install` and `npx pnpm dev`.
 

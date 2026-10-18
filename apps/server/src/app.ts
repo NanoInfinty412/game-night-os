@@ -1,4 +1,4 @@
-import { existsSync } from 'node:fs';
+import { createReadStream, existsSync } from 'node:fs';
 import Fastify, { type FastifyInstance } from 'fastify';
 import fastifyStatic from '@fastify/static';
 import { Server } from 'socket.io';
@@ -27,12 +27,25 @@ export interface AppOptions {
   build?: Omit<BuildOptions, 'used'>;
   /** Intro and reveal lengths; used when `rooms` is not given. */
   timing?: Partial<PartyTiming>;
+  /** Android TV app to offer at `/game-night-tv.apk`, so a TV can download it from this computer. */
+  apkPath?: string;
 }
+
+export const APK_ROUTE = '/game-night-tv.apk';
 
 export async function buildApp(options: AppOptions = {}): Promise<FastifyInstance> {
   const app = Fastify({ logger: options.logger ?? false });
 
   app.get('/health', async () => ({ ok: true }));
+
+  const apkPath = options.apkPath;
+  app.get(APK_ROUTE, async (_request, reply) => {
+    if (!apkPath || !existsSync(apkPath)) return reply.code(404).send({ error: 'Not found' });
+    return reply
+      .type('application/vnd.android.package-archive')
+      .header('content-disposition', 'attachment; filename="game-night-tv.apk"')
+      .send(createReadStream(apkPath));
+  });
 
   // Same-origin only: in dev the Vite server proxies /socket.io, in production we serve the web app.
   const io = new Server<

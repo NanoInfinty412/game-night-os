@@ -10,6 +10,17 @@ export function answerStyle(index: number) {
   return ANSWER_STYLES[index % ANSWER_STYLES.length]!;
 }
 
+const TRUE_FALSE_STYLES = [
+  { shape: '✔', name: 'true', color: '#a6e22e', shadow: '#6f9a17' },
+  { shape: '✘', name: 'false', color: '#ff6b6b', shadow: '#b03c3c' },
+] as const;
+
+/** True is a green tick and False a red cross; everything else uses the four shapes. */
+export function choiceStyle(index: number, style?: string) {
+  if (style === 'truefalse') return TRUE_FALSE_STYLES[index % 2]!;
+  return answerStyle(index);
+}
+
 /** "1st", "2nd", "3rd", "4th"… */
 export function ordinal(place: number): string {
   const suffix =

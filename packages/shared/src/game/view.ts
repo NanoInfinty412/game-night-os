@@ -32,7 +32,9 @@ export type RoundView =
   | {
       kind: 'question';
       style: QuestionStyle;
-      /** Category Clash: someone is choosing the category. */
+      /** Category Clash round: a player chooses the category first. */
+      pickRound: boolean;
+      /** Category Clash: someone is choosing the category right now. */
       picking?: { chooserId: string; categories: string[] };
       /** Present once answering is open (PLAY) and in REVEAL. */
       question?: PublicQuestion;
@@ -83,6 +85,7 @@ function roundView(game: PartyGame): RoundView {
       const view: RoundView = {
         kind: 'question',
         style: round.spec.style,
+        pickRound: !!round.spec.pick,
         answerMs: round.spec.ms,
       };
       if (game.phase === 'PLAY' && round.status === 'picking' && round.spec.pick) {

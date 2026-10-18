@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs';
 import { networkInterfaces } from 'node:os';
 import { fileURLToPath } from 'node:url';
-import { buildApp } from './app.js';
+import { APK_ROUTE, buildApp } from './app.js';
 
 const port = Number(process.env.PORT ?? 3000);
 const host = process.env.HOST ?? '0.0.0.0';
@@ -26,7 +26,9 @@ const timing = defined({ revealMs: envNumber('REVEAL_SECONDS', 1000) });
 
 // Serves the built web app when `pnpm build` has produced it; in dev, Vite serves it instead.
 const webDistDir = fileURLToPath(new URL('../../web/dist', import.meta.url));
-const app = await buildApp({ logger: true, build, timing, webDistDir });
+// Drop the Android TV app here and TVs can download it from http://<this computer>:3000/game-night-tv.apk
+const apkPath = fileURLToPath(new URL('../../../downloads/game-night-tv.apk', import.meta.url));
+const app = await buildApp({ logger: true, build, timing, webDistDir, apkPath });
 await app.listen({ port, host });
 
 /** Addresses phones and TVs on the same Wi-Fi can use to reach this computer. */
@@ -46,6 +48,9 @@ console.log(
     '🎉 Game Night is ready!',
     ...(lines.length ? lines : [`   📺 TV:     http://localhost:${webPort}/tv`]),
     '   📱 Phones: scan the QR code on the TV',
+    ...(existsSync(apkPath)
+      ? lanAddresses().map((ip) => `   🤖 TV app: http://${ip}:${port}${APK_ROUTE}`)
+      : []),
     servingWeb ? '' : '   (dev mode: the web app is served by Vite on port 5173)',
     '',
   ].join('\n'),

@@ -195,6 +195,7 @@ describe('question rounds', () => {
     expect(gameView(game, 0).current).toEqual({
       kind: 'question',
       style: 'trivia',
+      pickRound: false,
       answerMs: 20_000,
     });
     game = tick(game, ['ada', 'bo'], 1_000);

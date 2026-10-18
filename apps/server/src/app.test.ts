@@ -29,6 +29,21 @@ describe('unknown routes', () => {
   });
 });
 
+describe('GET /game-night-tv.apk', () => {
+  it('offers the Android TV app when the file is there, and 404s when it is not', async () => {
+    const dir = mkdtempSync(join(tmpdir(), 'gno-apk-'));
+    const apkPath = join(dir, 'game-night-tv.apk');
+    app = await buildApp({ apkPath });
+    expect((await app.inject({ method: 'GET', url: '/game-night-tv.apk' })).statusCode).toBe(404);
+
+    writeFileSync(apkPath, 'PK fake apk');
+    const response = await app.inject({ method: 'GET', url: '/game-night-tv.apk' });
+    expect(response.statusCode).toBe(200);
+    expect(response.headers['content-type']).toBe('application/vnd.android.package-archive');
+    expect(response.body).toBe('PK fake apk');
+  });
+});
+
 describe('serving the built web app', () => {
   it('falls back to index.html for client routes but keeps /health as JSON', async () => {
     const dist = mkdtempSync(join(tmpdir(), 'gno-web-'));

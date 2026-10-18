@@ -78,4 +78,42 @@ export const SONGS: Song[] = [
     ],
     drums: repeat<Drum | null>(['k', _, 'h', _, 's', _, 'h', _], 4),
   },
+  {
+    id: 'speedy-sneakers',
+    title: 'Speedy Sneakers',
+    bpm: 150,
+    // A – F – C – G, quick and bouncy for racing rounds
+    melody: [
+      ...bar('A4', 'C5', 'E5', 'C5', 'A4', 'E4', 'A4', 'C5'),
+      ...bar('F4', 'A4', 'C5', 'A4', 'F4', 'C4', 'F4', 'A4'),
+      ...bar('E4', 'G4', 'C5', 'G4', 'E4', 'C4', 'E4', 'G4'),
+      ...bar('D4', 'G4', 'B4', 'D5', 'B4', 'G4', 'D4', _),
+    ],
+    bass: [
+      ...bar('A2', 'A2', 'E3', 'A2', 'A2', 'A2', 'E3', 'A2'),
+      ...bar('F2', 'F2', 'C3', 'F2', 'F2', 'F2', 'C3', 'F2'),
+      ...bar('C3', 'C3', 'G3', 'C3', 'C3', 'C3', 'G3', 'C3'),
+      ...bar('G2', 'G2', 'D3', 'G2', 'G2', 'G2', 'B2', 'D3'),
+    ],
+    drums: repeat<Drum | null>(['k', 'h', 's', 'h', 'k', 'h', 's', 's'], 4),
+  },
+  {
+    id: 'sunny-picnic',
+    title: 'Sunny Picnic',
+    bpm: 112,
+    // D – Bm – G – A, a gentle sing-along
+    melody: [
+      ...bar('F#5', _, 'A5', 'F#5', 'D5', _, 'E5', 'F#5'),
+      ...bar('D5', _, 'B4', 'D5', 'F#5', _, 'E5', 'D5'),
+      ...bar('B4', 'D5', 'G5', _, 'F#5', 'E5', 'D5', 'B4'),
+      ...bar('C#5', 'E5', 'A5', _, 'G5', 'F#5', 'E5', _),
+    ],
+    bass: [
+      ...bar('D3', _, 'A2', _, 'D3', _, 'A2', _),
+      ...bar('B2', _, 'F#2', _, 'B2', _, 'F#2', _),
+      ...bar('G2', _, 'D3', _, 'G2', _, 'D3', _),
+      ...bar('A2', _, 'E3', _, 'A2', _, 'C#3', _),
+    ],
+    drums: repeat<Drum | null>(['k', _, 'h', 'k', 's', _, 'h', _], 4),
+  },
 ];

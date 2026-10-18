@@ -175,4 +175,58 @@ export const sfx = {
     const ctx = getContext();
     tone(ctx, ctx.destination, 'triangle', 330, ctx.currentTime, 0.18, 0.25, 220);
   },
+  /** Last seconds of a countdown. */
+  tick() {
+    const ctx = getContext();
+    tone(ctx, ctx.destination, 'sine', 1320, ctx.currentTime, 0.06, 0.18);
+  },
+  /** A new round slides in. */
+  whoosh() {
+    const ctx = getContext();
+    tone(ctx, ctx.destination, 'sine', 240, ctx.currentTime, 0.35, 0.22, 960);
+    tone(ctx, ctx.destination, 'triangle', 480, ctx.currentTime + 0.05, 0.3, 0.08, 1440);
+  },
+  /** Quick Draw: GO! */
+  go() {
+    const ctx = getContext();
+    tone(ctx, ctx.destination, 'square', noteToFrequency('G5'), ctx.currentTime, 0.12, 0.15);
+    tone(ctx, ctx.destination, 'square', noteToFrequency('C6'), ctx.currentTime + 0.1, 0.3, 0.15);
+  },
+  /** The answer is revealed. */
+  ding() {
+    const ctx = getContext();
+    tone(ctx, ctx.destination, 'sine', noteToFrequency('E6'), ctx.currentTime, 0.5, 0.25);
+    tone(ctx, ctx.destination, 'sine', noteToFrequency('B6'), ctx.currentTime + 0.08, 0.6, 0.12);
+  },
+  /** Final scores. */
+  fanfare() {
+    const ctx = getContext();
+    const notes = ['C5', 'E5', 'G5', 'C6', 'G5', 'C6'];
+    const lengths = [0.12, 0.12, 0.12, 0.3, 0.12, 0.7];
+    let at = ctx.currentTime;
+    notes.forEach((note, i) => {
+      tone(ctx, ctx.destination, 'triangle', noteToFrequency(note), at, lengths[i]!, 0.3);
+      tone(ctx, ctx.destination, 'square', noteToFrequency(note), at, lengths[i]! * 0.6, 0.05);
+      at += lengths[i]! * 0.9;
+    });
+  },
+  /** One tap in a tapping race. */
+  tap() {
+    const ctx = getContext();
+    tone(ctx, ctx.destination, 'sine', 700 + Math.random() * 300, ctx.currentTime, 0.05, 0.12);
+  },
+  /** Tapped too early in Quick Draw: a friendly boing. */
+  boing() {
+    const ctx = getContext();
+    tone(ctx, ctx.destination, 'triangle', 180, ctx.currentTime, 0.4, 0.3, 520);
+  },
 };
+
+/** A little buzz on phones that support it. Harmless where they don't. */
+export function buzz(pattern: number | number[]) {
+  try {
+    navigator.vibrate?.(pattern);
+  } catch {
+    // Not supported.
+  }
+}

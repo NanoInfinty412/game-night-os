@@ -1,13 +1,16 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
+  GAMES,
   MIN_PLAYERS,
+  gameInfo,
   NICKNAME_MAX_LENGTH,
   ROOM_CODE_LENGTH,
   joinRequestSchema,
   type JoinRequest,
   type PlayerSession,
   type ProtocolError,
+  type GameId,
   type RoomSnapshot,
 } from '@gno/shared';
 import { sfx } from '../audio/engine';
@@ -43,6 +46,7 @@ export function PlayJoin() {
     return (
       <PlayerLobby
         onStart={() => act('game:start')}
+        onSelect={(gameId) => act('game:select', { gameId })}
         session={state.session}
         room={state.room}
         connected={state.connected}
@@ -173,6 +177,7 @@ function PlayerLobby({
   celebrate,
   onLeave,
   onStart,
+  onSelect,
 }: {
   session: PlayerSession;
   room: RoomSnapshot | undefined;
@@ -180,6 +185,7 @@ function PlayerLobby({
   celebrate: boolean;
   onLeave: () => void;
   onStart: () => Promise<ProtocolError | undefined>;
+  onSelect: (gameId: GameId) => Promise<ProtocolError | undefined>;
 }) {
   const me = room?.players.find((p) => p.id === session.playerId);
   const others = room?.players.filter((p) => p.id !== session.playerId) ?? [];
@@ -244,6 +250,44 @@ function PlayerLobby({
             : `You can start once ${MIN_PLAYERS} players are here.`}
         </p>
       )}
+      {me?.isVip && room && (
+        <div className="relative w-full max-w-sm">
+          <p className="mb-2 text-base font-semibold uppercase tracking-widest text-white/60">
+            Pick a game
+          </p>
+          <ul className="grid grid-cols-2 gap-2">
+            {GAMES.map((game) => {
+              const isSelected = game.id === room.selectedGame;
+              return (
+                <li key={game.id}>
+                  <button
+                    type="button"
+                    data-testid="phone-game"
+                    data-game={game.id}
+                    aria-pressed={isSelected}
+                    onClick={() => {
+                      sfx.tap();
+                      void onSelect(game.id);
+                    }}
+                    className={`flex w-full items-center gap-2 rounded-2xl px-3 py-2 text-left text-base font-bold transition active:scale-95 ${isSelected ? 'text-night-950' : 'bg-night-800 text-white'}`}
+                    style={
+                      isSelected
+                        ? { backgroundColor: game.color }
+                        : { boxShadow: `inset 0 0 0 3px ${game.color}66` }
+                    }
+                  >
+                    <span className="text-2xl" aria-hidden>
+                      {game.emoji}
+                    </span>
+                    <span className="leading-tight">{game.title}</span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+          <p className="mt-2 text-base text-white/70">{gameInfo(room.selectedGame).tagline}</p>
+        </div>
+      )}
       {me?.isVip && (
         <button
           type="button"
@@ -261,7 +305,12 @@ function PlayerLobby({
         </p>
       )}
       {!me?.isVip && room && (
-        <p className="relative text-lg text-white/70">Waiting for the 👑 VIP to start the game…</p>
+        <div className="relative flex flex-col items-center gap-1">
+          <p data-testid="selected-game" className="text-2xl font-bold">
+            {gameInfo(room.selectedGame).emoji} {gameInfo(room.selectedGame).title}
+          </p>
+          <p className="text-lg text-white/70">Waiting for the 👑 VIP to start the game…</p>
+        </div>
       )}
       {others.length > 0 && (
         <div className="relative flex flex-col items-center gap-2">

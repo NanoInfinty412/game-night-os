@@ -7,6 +7,8 @@ import { toLocalClock } from '../game/clock';
 // Survives a phone refresh or the browser being backgrounded.
 const PLAYER_KEY = 'gno:player';
 
+export type GameEvent = 'game:select' | 'game:start' | 'game:action' | 'game:next' | 'game:quit';
+
 export type PlayerState =
   | { status: 'connecting' }
   | { status: 'form'; notice?: string }
@@ -106,12 +108,9 @@ export function usePlayerSession(codeFromLink: string | undefined) {
     setState({ status: 'form' });
   }, []);
 
-  /** Sends a game intent (start, answer, next); resolves with an error the screen can show. */
+  /** Sends a game intent; resolves with an error the screen can show. */
   const act = useCallback(
-    async (
-      event: 'game:start' | 'game:answer' | 'game:next',
-      payload?: unknown,
-    ): Promise<ProtocolError | undefined> => {
+    async (event: GameEvent, payload?: unknown): Promise<ProtocolError | undefined> => {
       const socket = socketRef.current;
       if (!socket) return { code: 'INTERNAL_ERROR', message: 'Still connecting…' };
       const result = await (payload === undefined
