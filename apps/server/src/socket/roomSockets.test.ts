@@ -2,7 +2,8 @@ import type { AddressInfo } from 'node:net';
 import { afterEach, describe, expect, it } from 'vitest';
 import { io as connect, type Socket } from 'socket.io-client';
 import type {
-  TriviaSettings,
+  BuildOptions,
+  PartyTiming,
   Ack,
   ClientToServerEvents,
   HostSession,
@@ -25,11 +26,13 @@ afterEach(async () => {
   app = undefined;
 });
 
-async function startServer(
-  roomSockets: Partial<RoomSocketOptions> = {},
-  trivia?: Partial<TriviaSettings>,
-) {
-  app = await buildApp({ roomSockets, trivia });
+interface GameSettings {
+  build?: Omit<BuildOptions, 'used'>;
+  timing?: Partial<PartyTiming>;
+}
+
+async function startServer(roomSockets: Partial<RoomSocketOptions> = {}, game: GameSettings = {}) {
+  app = await buildApp({ roomSockets, ...game });
   await app.listen({ port: 0, host: '127.0.0.1' });
   return `http://127.0.0.1:${(app.server.address() as AddressInfo).port}`;
 }
@@ -278,9 +281,14 @@ describe('room sockets', () => {
   });
 });
 
-describe('trivia game over sockets', () => {
-  async function lobbyOfTwo(trivia: Partial<TriviaSettings>, roomSockets = {}) {
-    const url = await startServer(roomSockets, trivia);
+describe('games over sockets', () => {
+  const fast: GameSettings = {
+    build: { triviaCount: 2, timings: { triviaMs: 400, mashMs: 300 } },
+    timing: { introMs: 100, revealMs: 150 },
+  };
+
+  async function lobbyOfTwo(game: GameSettings = fast, roomSockets = {}) {
+    const url = await startServer(roomSockets, game);
     const { tv, session } = await hostRoom(url);
     const ada = await client(url);
     const bo = await client(url);
@@ -289,50 +297,63 @@ describe('trivia game over sockets', () => {
     return { url, tv, ada, bo, session };
   }
 
-  it('plays a whole game: early close, timeout, reveal, final scores, back to lobby', async () => {
-    const { tv, ada, bo } = await lobbyOfTwo({ questionCount: 2, questionMs: 400, revealMs: 150 });
+  const answer = (round: number, choice: number) => ({ type: 'answer', round, choice });
+
+  it('plays a whole trivia game: early close, timeout, reveal, final scores, back to lobby', async () => {
+    const { tv, ada, bo } = await lobbyOfTwo();
     const seen: RoomSnapshot[] = [];
     tv.on('room:state', (s) => seen.push(s));
 
+    expect(await request(bo, 'game:select', { gameId: 'trivia' })).toMatchObject({
+      ok: false,
+      error: { code: 'NOT_VIP' },
+    });
+    const selected = nextState(tv, (s) => s.selectedGame === 'trivia');
+    await ok(request(ada, 'game:select', { gameId: 'trivia' }));
+    await selected;
     expect(await request(bo, 'game:start')).toMatchObject({
       ok: false,
       error: { code: 'NOT_VIP' },
     });
-    const question = nextState(tv, (s) => s.phase === 'QUESTION');
+
+    const intro = nextState(tv, (s) => s.phase === 'INTRO');
+    const question = nextState(tv, (s) => s.phase === 'PLAY');
     await ok(request(ada, 'game:start'));
+    expect((await intro).game!.totalRounds).toBe(2);
     const q1 = (await question).game!;
     expect(q1.round).toBe(0);
-    expect(q1.totalRounds).toBe(2);
-    expect(q1.question).not.toHaveProperty('answer');
+    expect(q1.current).toMatchObject({
+      kind: 'question',
+      question: { choices: expect.any(Array) },
+    });
 
     // Round 1: both answer, so it reveals without waiting for the clock.
     const reveal = nextState(tv, (s) => s.phase === 'REVEAL');
-    await ok(request(ada, 'game:answer', { round: 0, choice: 0 }));
-    expect(await request(ada, 'game:answer', { round: 0, choice: 1 })).toMatchObject({
+    await ok(request(ada, 'game:action', answer(0, 0)));
+    expect(await request(ada, 'game:action', answer(0, 1))).toMatchObject({
       ok: false,
       error: { code: 'ALREADY_ANSWERED' },
     });
-    await ok(request(bo, 'game:answer', { round: 0, choice: 1 }));
+    await ok(request(bo, 'game:action', answer(0, 1)));
     const r1 = (await reveal).game!;
-    expect(Date.now()).toBeLessThan(q1.deadline);
-    const answer = r1.reveal!.answer;
-    const adaId = r1.answeredIds[0]!;
-    expect(r1.reveal!.results[adaId]!.points > 0).toBe(answer === 0);
+    expect(Date.now()).toBeLessThan(q1.phaseEndsAt);
+    const correct = r1.current.kind === 'question' ? r1.current.answer : undefined;
+    const adaId = r1.doneIds[0]!;
+    expect(r1.results![adaId]!.points > 0).toBe(correct === 0);
 
-    // The reveal ends on its own, then nobody answers round 2 and the clock closes it.
-    const q2 = (await nextState(tv, (s) => s.phase === 'QUESTION')).game!;
+    // The reveal and intro end on their own, then nobody answers round 2 and the clock closes it.
+    const q2 = (await nextState(tv, (s) => s.phase === 'PLAY')).game!;
     expect(q2.round).toBe(1);
-    expect(await request(bo, 'game:answer', { round: 0, choice: 0 })).toMatchObject({
+    expect(await request(bo, 'game:action', answer(0, 0))).toMatchObject({
       ok: false,
       error: { code: 'WRONG_PHASE' },
     });
     const final = await nextState(tv, (s) => s.phase === 'FINAL');
     expect(final.game!.standings).toHaveLength(2);
-    expect(final.game!.reveal).toBeUndefined();
 
-    // No snapshot ever leaked the answer while the question was open.
-    for (const state of seen.filter((s) => s.phase === 'QUESTION')) {
-      expect(state.game?.reveal).toBeUndefined();
+    // No snapshot ever leaked the answer while a question was open.
+    for (const state of seen.filter((s) => s.phase !== 'REVEAL' && s.phase !== 'FINAL')) {
+      expect(JSON.stringify(state)).not.toContain('"answer"');
     }
 
     const lobby = nextState(tv, (s) => s.phase === 'LOBBY');
@@ -340,8 +361,43 @@ describe('trivia game over sockets', () => {
     expect((await lobby).game).toBeUndefined();
   });
 
+  it('the TV can choose, start, skip and quit with its remote', async () => {
+    const { tv } = await lobbyOfTwo({ ...fast, timing: { introMs: 60_000, revealMs: 60_000 } });
+    await ok(request(tv, 'game:select', { gameId: 'quick-draw' }));
+    const intro = nextState(tv, (s) => s.phase === 'INTRO');
+    await ok(request(tv, 'game:start'));
+    expect((await intro).game!.gameId).toBe('quick-draw');
+    const play = nextState(tv, (s) => s.phase === 'PLAY');
+    await ok(request(tv, 'game:next'));
+    expect((await play).game!.current).toEqual({ kind: 'reaction', status: 'wait' });
+    const lobby = nextState(tv, (s) => s.phase === 'LOBBY');
+    await ok(request(tv, 'game:quit'));
+    await lobby;
+  });
+
+  it('a tapping race counts taps and batches the updates', async () => {
+    const { tv, ada, bo } = await lobbyOfTwo({ ...fast, build: { timings: { mashMs: 600 } } });
+    await ok(request(ada, 'game:select', { gameId: 'tap-frenzy' }));
+    const play = nextState(tv, (s) => s.phase === 'PLAY');
+    await ok(request(ada, 'game:start'));
+    await play;
+    let updates = 0;
+    tv.on('room:state', () => updates++);
+    for (let i = 0; i < 5; i++) {
+      await ok(request(ada, 'game:action', { type: 'tap', round: 0 }));
+      await new Promise((r) => setTimeout(r, 55));
+    }
+    await ok(request(bo, 'game:action', { type: 'tap', round: 0 }));
+    const reveal = await nextState(tv, (s) => s.phase === 'REVEAL');
+    expect(updates).toBeLessThan(6); // 6 taps, fewer broadcasts
+    const results = reveal.game!.results!;
+    const [adaId, boId] = reveal.players.map((p) => p.id);
+    expect(results[adaId!]).toEqual({ value: 5, points: 1000 });
+    expect(results[boId!]).toEqual({ value: 1, points: 800 });
+  });
+
   it('a lone player cannot start a game', async () => {
-    const { tv, ada, bo } = await lobbyOfTwo({});
+    const { tv, ada, bo } = await lobbyOfTwo();
     const left = nextState(tv, (s) => s.players.length === 1);
     await ok(request(bo, 'player:leave'));
     await left;
@@ -351,39 +407,55 @@ describe('trivia game over sockets', () => {
     });
   });
 
-  it('a dropped phone keeps its seat during a game and the question closes without it', async () => {
+  it('a dropped phone keeps its seat during a game and the round closes without it', async () => {
     const { tv, ada, bo } = await lobbyOfTwo(
-      { questionCount: 2, questionMs: 5_000, revealMs: 60_000 },
+      { build: { timings: { triviaMs: 5_000 } }, timing: { introMs: 50, revealMs: 60_000 } },
       { lobbyGraceMs: 50 },
     );
-    const question = nextState(tv, (s) => s.phase === 'QUESTION');
+    await ok(request(ada, 'game:select', { gameId: 'trivia' }));
+    const question = nextState(tv, (s) => s.phase === 'PLAY');
     await ok(request(ada, 'game:start'));
     await question;
-    await ok(request(ada, 'game:answer', { round: 0, choice: 0 }));
+    await ok(request(ada, 'game:action', answer(0, 0)));
 
     const reveal = nextState(tv, (s) => s.phase === 'REVEAL');
     bo.disconnect();
-    const revealed = await reveal;
+    await reveal;
     await new Promise((r) => setTimeout(r, 150)); // longer than the lobby grace period
-    const skip = nextState(tv, (s) => s.phase === 'QUESTION');
+    const skip = nextState(tv, (s) => s.phase === 'INTRO');
     await ok(request(ada, 'game:next'));
     expect((await skip).players.map((p) => [p.nickname, p.connected])).toEqual([
       ['Ada', true],
       ['Bo', false],
     ]);
-    expect(revealed.game!.round).toBe(0);
   });
 
-  it('rejects malformed answers', async () => {
-    const { tv, ada } = await lobbyOfTwo({ questionCount: 1 });
-    const question = nextState(tv, (s) => s.phase === 'QUESTION');
+  it('rejects malformed actions and unknown games', async () => {
+    const { tv, ada } = await lobbyOfTwo();
+    expect(await request(ada, 'game:select', { gameId: 'chess' })).toMatchObject({
+      ok: false,
+      error: { code: 'INVALID_PAYLOAD' },
+    });
+    await ok(request(ada, 'game:select', { gameId: 'trivia' }));
+    const question = nextState(tv, (s) => s.phase === 'PLAY');
     await ok(request(ada, 'game:start'));
     await question;
-    for (const payload of [{ round: 0, choice: 4 }, { round: -1, choice: 0 }, { choice: 1 }, 'A']) {
-      expect(await request(ada, 'game:answer', payload)).toMatchObject({
+    for (const payload of [
+      answer(0, 4),
+      answer(-1, 0),
+      { type: 'answer', choice: 1 },
+      { type: 'dance', round: 0 },
+      { type: 'guess', round: 0, value: 1.5 },
+      'A',
+    ]) {
+      expect(await request(ada, 'game:action', payload)).toMatchObject({
         ok: false,
         error: { code: 'INVALID_PAYLOAD' },
       });
     }
+    expect(await request(tv, 'game:action', answer(0, 0))).toMatchObject({
+      ok: false,
+      error: { code: 'NOT_IN_ROOM' },
+    });
   });
 });

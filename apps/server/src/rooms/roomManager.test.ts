@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { MAX_PLAYERS, type Question } from '@gno/shared';
+import { MAX_PLAYERS, type GameContent, type Question } from '@gno/shared';
 import { GameError } from './errors.js';
 import { RoomManager } from './roomManager.js';
 
@@ -10,26 +10,32 @@ function setup() {
   return { rooms, room };
 }
 
-const questions: Question[] = ['one', 'two', 'three', 'four'].map((id) => ({
+const trivia: Question[] = ['one', 'two', 'three', 'four'].map((id) => ({
   id,
   category: 'Test',
   prompt: `Question ${id}?`,
   choices: ['A', 'B', 'C', 'D'],
   answer: 0,
 }));
+const content: GameContent = { trivia, trueFalse: [], emoji: [], numbers: [] };
 
-/** A room with Ada (VIP) and Bo, playing 2 questions of 10s with a 5s reveal. */
+/** A room with Ada (VIP) and Bo; Trivia Chaos plays 2 questions of 10s, intro 1s, reveal 5s. */
 function gameSetup() {
   const rooms = new RoomManager({
-    questions,
-    trivia: { questionCount: 2, questionMs: 10_000, revealMs: 5_000 },
+    content,
+    build: { triviaCount: 2, timings: { triviaMs: 10_000 } },
+    timing: { introMs: 1_000, revealMs: 5_000 },
     random: () => 0.9999, // keeps question and choice order
   });
   const room = rooms.createRoom(0);
   const ada = rooms.joinRoom(room.code, 'Ada', 0).player;
   const bo = rooms.joinRoom(room.code, 'Bo', 0).player;
-  return { rooms, room, ada, bo };
+  rooms.selectGame(room.code, { role: 'host' }, 'trivia', 0);
+  const as = (id: string) => ({ role: 'player' as const, playerId: id });
+  return { rooms, room, ada, bo, as };
 }
+
+const answer = (round: number, choice: number) => ({ type: 'answer' as const, round, choice });
 
 function expectGameError(fn: () => unknown, code: string) {
   try {
@@ -50,6 +56,7 @@ describe('RoomManager', () => {
       phase: 'LOBBY',
       hostConnected: true,
       players: [],
+      selectedGame: 'party-mix',
     });
     expect(room.hostToken).toMatch(/^token-/);
   });
@@ -130,81 +137,89 @@ describe('RoomManager', () => {
 });
 
 describe('RoomManager games', () => {
-  it('only the VIP can start, and only with two connected players', () => {
-    const { rooms, room, ada, bo } = gameSetup();
-    expectGameError(() => rooms.startGame(room.code, bo.id, 0), 'NOT_VIP');
+  it('the VIP or the TV choose and start; only with two connected players', () => {
+    const { rooms, room, ada, bo, as } = gameSetup();
+    expect(room.selectedGame).toBe('trivia');
+    expectGameError(() => rooms.selectGame(room.code, as(bo.id), 'quick-draw', 0), 'NOT_VIP');
+    rooms.selectGame(room.code, as(ada.id), 'quick-draw', 0);
+    expect(rooms.snapshot(room, 0).selectedGame).toBe('quick-draw');
+    rooms.selectGame(room.code, { role: 'host' }, 'trivia', 0);
+    expectGameError(() => rooms.startGame(room.code, as(bo.id), 0), 'NOT_VIP');
     rooms.setPlayerConnected(room.code, bo.id, false, 0);
-    expectGameError(() => rooms.startGame(room.code, ada.id, 0), 'NOT_ENOUGH_PLAYERS');
+    expectGameError(() => rooms.startGame(room.code, as(ada.id), 0), 'NOT_ENOUGH_PLAYERS');
     rooms.setPlayerConnected(room.code, bo.id, true, 0);
-    rooms.startGame(room.code, ada.id, 1_000);
-    expect(room.phase).toBe('QUESTION');
-    expectGameError(() => rooms.startGame(room.code, ada.id, 0), 'WRONG_PHASE');
+    rooms.startGame(room.code, { role: 'host' }, 1_000);
+    expect(room.phase).toBe('INTRO');
+    expectGameError(() => rooms.startGame(room.code, as(ada.id), 0), 'WRONG_PHASE');
+    expectGameError(() => rooms.selectGame(room.code, as(ada.id), 'trivia', 0), 'WRONG_PHASE');
     expectGameError(() => rooms.joinRoom(room.code, 'Late', 2_000), 'ROOM_FULL');
   });
 
   it('never puts the answer in a snapshot before the reveal', () => {
-    const { rooms, room, ada } = gameSetup();
-    rooms.startGame(room.code, ada.id, 1_000);
+    const { rooms, room, ada, as } = gameSetup();
+    rooms.startGame(room.code, as(ada.id), 0);
+    rooms.tick(room, 1_000);
     const view = rooms.snapshot(room, 1_500).game!;
-    expect(view).toMatchObject({ round: 0, totalRounds: 2, deadline: 11_000, serverNow: 1_500 });
-    expect(view.question).not.toHaveProperty('answer');
-    expect(view.reveal).toBeUndefined();
+    expect(view).toMatchObject({ phase: 'PLAY', round: 0, totalRounds: 2, phaseEndsAt: 11_000 });
+    expect(view.serverNow).toBe(1_500);
     expect(JSON.stringify(view)).not.toContain('"answer"');
   });
 
-  it('reveals as soon as everyone connected answered, then plays to the end and back', () => {
-    const { rooms, room, ada, bo } = gameSetup();
-    rooms.startGame(room.code, ada.id, 0);
-    rooms.answer(room.code, ada.id, 0, 0, 2_000);
-    expect(room.phase).toBe('QUESTION');
-    expect(rooms.snapshot(room, 2_000).game!.answeredIds).toEqual([ada.id]);
-    expectGameError(() => rooms.answer(room.code, ada.id, 0, 1, 2_100), 'ALREADY_ANSWERED');
-    rooms.answer(room.code, bo.id, 0, 3, 3_000);
+  it('reveals once everyone connected answered, then plays to the end and back', () => {
+    const { rooms, room, ada, bo, as } = gameSetup();
+    rooms.startGame(room.code, as(ada.id), 0);
+    expectGameError(() => rooms.act(room.code, ada.id, answer(0, 0), 500), 'WRONG_PHASE');
+    rooms.next(room.code, as(ada.id), 500); // skip the intro: answering opens at 500
+    expect(room.phase).toBe('PLAY');
+    rooms.act(room.code, ada.id, answer(0, 0), 2_500);
+    expect(room.phase).toBe('PLAY');
+    expect(rooms.snapshot(room, 2_500).game!.doneIds).toEqual([ada.id]);
+    expectGameError(() => rooms.act(room.code, ada.id, answer(0, 1), 2_600), 'ALREADY_ANSWERED');
+    rooms.act(room.code, bo.id, answer(0, 3), 3_000);
     expect(room.phase).toBe('REVEAL');
-    expect(rooms.snapshot(room, 3_000).game!.reveal).toEqual({
-      answer: 0,
-      results: { [ada.id]: { choice: 0, points: 900 }, [bo.id]: { choice: 3, points: 0 } },
+    expect(rooms.snapshot(room, 3_000).game!.results).toEqual({
+      [ada.id]: { value: 0, points: 900 },
+      [bo.id]: { value: 3, points: 0 },
     });
     expect(rooms.nextDeadline(room)).toBe(8_000);
 
-    expectGameError(() => rooms.next(room.code, bo.id, 4_000), 'NOT_VIP');
-    rooms.next(room.code, ada.id, 4_000);
-    expect(room.phase).toBe('QUESTION');
-    expectGameError(() => rooms.answer(room.code, bo.id, 0, 0, 4_100), 'WRONG_PHASE');
+    expectGameError(() => rooms.next(room.code, as(bo.id), 4_000), 'NOT_VIP');
+    rooms.next(room.code, { role: 'host' }, 4_000);
+    expect(room.phase).toBe('INTRO');
+  });
 
-    // Nobody answers: the clock closes the question and then the reveal.
-    expect(rooms.tick(room, 13_999)).toBe(false);
-    expect(rooms.tick(room, 14_000)).toBe(true);
-    expect(room.phase).toBe('REVEAL');
-    expectGameError(() => rooms.answer(room.code, bo.id, 1, 0, 14_001), 'WRONG_PHASE');
-    rooms.tick(room, 19_000);
+  it('the clock runs intros, questions and reveals to the final scores', () => {
+    const { rooms, room, ada, as } = gameSetup();
+    rooms.startGame(room.code, as(ada.id), 0);
+    let t = 0;
+    while (room.phase !== 'FINAL' && t < 100_000) {
+      t = rooms.nextDeadline(room)!;
+      rooms.tick(room, t);
+    }
     expect(room.phase).toBe('FINAL');
-    expect(rooms.snapshot(room, 19_000).game!.standings).toEqual([
-      { playerId: ada.id, score: 900, place: 1 },
-      { playerId: bo.id, score: 0, place: 2 },
-    ]);
+    expect(rooms.snapshot(room, t).game!.standings).toHaveLength(2);
     expect(rooms.nextDeadline(room)).toBeUndefined();
-
-    rooms.next(room.code, ada.id, 20_000);
+    rooms.next(room.code, as(ada.id), t + 1);
     expect(room.phase).toBe('LOBBY');
     expect(room.game).toBeUndefined();
   });
 
   it('a rematch asks questions that were not asked yet', () => {
-    const { rooms, room, ada } = gameSetup();
-    rooms.startGame(room.code, ada.id, 0);
-    const first = room.game!.questions.map((q) => q.id);
-    room.game = { ...room.game!, phase: 'FINAL' };
-    rooms.next(room.code, ada.id, 1);
-    rooms.startGame(room.code, ada.id, 2);
-    const second = room.game!.questions.map((q) => q.id);
-    expect(second.filter((id) => first.includes(id))).toEqual([]);
+    const { rooms, room, ada, as } = gameSetup();
+    rooms.startGame(room.code, as(ada.id), 0);
+    const first = [...room.usedQuestionIds];
+    rooms.quit(room.code, as(ada.id), 1);
+    rooms.startGame(room.code, as(ada.id), 2);
+    const second = [...room.usedQuestionIds].filter((id) => !first.includes(id));
+    expect(first).toHaveLength(2);
+    expect(second).toHaveLength(2);
   });
 
   it('a player leaving mid-game no longer holds up the question', () => {
-    const { rooms, room, ada, bo } = gameSetup();
-    rooms.startGame(room.code, ada.id, 0);
-    rooms.answer(room.code, bo.id, 0, 0, 1_000);
+    const { rooms, room, ada, bo, as } = gameSetup();
+    rooms.startGame(room.code, as(ada.id), 0);
+    rooms.tick(room, 1_000);
+    rooms.act(room.code, bo.id, answer(0, 0), 1_500);
     rooms.removePlayer(room.code, ada.id, 2_000);
     expect(room.phase).toBe('REVEAL');
     expect(room.vipId).toBe(bo.id);
@@ -212,12 +227,22 @@ describe('RoomManager games', () => {
     expect(room.phase).toBe('LOBBY');
   });
 
-  it('rejects answers that are not a valid choice', () => {
-    const { rooms, room, ada } = gameSetup();
-    expectGameError(() => rooms.answer(room.code, ada.id, 0, 0, 0), 'WRONG_PHASE');
-    rooms.startGame(room.code, ada.id, 0);
-    expectGameError(() => rooms.answer(room.code, ada.id, 0, 7, 1), 'INVALID_PAYLOAD');
-    expectGameError(() => rooms.answer(room.code, 'nobody', 0, 0, 1), 'NOT_IN_ROOM');
-    expectGameError(() => rooms.answer(room.code, ada.id, 0, 0, 10_001), 'TOO_LATE');
+  it('only the VIP or TV can quit', () => {
+    const { rooms, room, ada, bo, as } = gameSetup();
+    expectGameError(() => rooms.quit(room.code, as(ada.id), 0), 'WRONG_PHASE');
+    rooms.startGame(room.code, as(ada.id), 0);
+    expectGameError(() => rooms.quit(room.code, as(bo.id), 0), 'NOT_VIP');
+    rooms.quit(room.code, { role: 'host' }, 0);
+    expect(room.phase).toBe('LOBBY');
+  });
+
+  it('maps engine refusals to protocol errors', () => {
+    const { rooms, room, ada, as } = gameSetup();
+    rooms.startGame(room.code, as(ada.id), 0);
+    rooms.tick(room, 1_000);
+    expectGameError(() => rooms.act(room.code, ada.id, answer(0, 3.5), 1_001), 'INVALID_PAYLOAD');
+    expectGameError(() => rooms.act(room.code, 'nobody', answer(0, 0), 1_001), 'NOT_IN_ROOM');
+    expectGameError(() => rooms.act(room.code, ada.id, answer(1, 0), 1_001), 'WRONG_PHASE');
+    expectGameError(() => rooms.act(room.code, ada.id, answer(0, 0), 11_001), 'TOO_LATE');
   });
 });
