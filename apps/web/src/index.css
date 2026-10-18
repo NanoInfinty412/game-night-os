@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 
 @theme {
-  --font-display: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Fredoka', ui-rounded, ui-sans-serif, system-ui, sans-serif;
   --color-night-950: #0b0620;
   --color-night-900: #120b2e;
   --color-night-800: #1d1247;
@@ -29,6 +29,72 @@ body {
 :focus-visible {
   outline: 3px solid var(--color-pop-yellow);
   outline-offset: 3px;
+}
+
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: rotate(0deg) translateY(0);
+  }
+  25% {
+    transform: rotate(-4deg) translateY(-0.04em);
+  }
+  75% {
+    transform: rotate(4deg) translateY(0.02em);
+  }
+}
+
+@keyframes bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-0.4rem);
+  }
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.06);
+    opacity: 1;
+  }
+}
+
+@keyframes drift {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate(0.8rem, -1.2rem) rotate(25deg);
+  }
+}
+
+@keyframes tile-bounce {
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--tilt));
+  }
+  50% {
+    transform: translateY(-0.5rem) rotate(calc(var(--tilt) * -1));
+  }
+}
+
+@keyframes confetti-fall {
+  from {
+    transform: translateY(-10vh) rotate(0deg);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(110vh) rotate(720deg);
+    opacity: 0.8;
+  }
 }
 
 @keyframes pop-in {

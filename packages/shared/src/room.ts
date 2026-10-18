@@ -32,6 +32,8 @@ export type JoinRequest = z.infer<typeof joinRequestSchema>;
 export interface PublicPlayer {
   id: string;
   nickname: string;
+  /** 0-based seat; stable while the player stays in the room and picks their avatar and colour. */
+  seat: number;
   isVip: boolean;
   connected: boolean;
 }
