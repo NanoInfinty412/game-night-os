@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import type { HostSession, RoomSnapshot } from '@gno/shared';
 import { createSocket, request } from '../net/socket';
 import { load, save, session } from '../net/storage';
+import { toLocalClock } from '../game/clock';
 
 // Per browser tab, so a refresh keeps the room but a second TV tab gets its own.
 const HOST_KEY = 'gno:host';
@@ -39,7 +40,9 @@ export function useHostRoom(): HostRoomState {
         current.status === 'ready' ? { ...current, connected: false } : current,
       ),
     );
-    socket.on('room:state', (room) => setState({ status: 'ready', room, connected: true }));
+    socket.on('room:state', (room) =>
+      setState({ status: 'ready', room: toLocalClock(room, Date.now()), connected: true }),
+    );
     socket.on('room:closed', () => {
       save(session, HOST_KEY, undefined);
       void openRoom();

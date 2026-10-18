@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { JoinRequest, PlayerSession, ProtocolError, RoomSnapshot } from '@gno/shared';
 import { createSocket, request, type GameSocket } from '../net/socket';
 import { load, local, save } from '../net/storage';
+import { toLocalClock } from '../game/clock';
 
 // Survives a phone refresh or the browser being backgrounded.
 const PLAYER_KEY = 'gno:player';
@@ -59,7 +60,8 @@ export function usePlayerSession(codeFromLink: string | undefined) {
     socket.on('disconnect', () =>
       setState((s) => (s.status === 'lobby' ? { ...s, connected: false } : s)),
     );
-    socket.on('room:state', (room) => {
+    socket.on('room:state', (serverRoom) => {
+      const room = toLocalClock(serverRoom, Date.now());
       latestRoom.current = room;
       setState((s) => {
         if (s.status !== 'lobby' || room.code !== s.session.roomCode) return s;
@@ -104,5 +106,21 @@ export function usePlayerSession(codeFromLink: string | undefined) {
     setState({ status: 'form' });
   }, []);
 
-  return { state, join, leave };
+  /** Sends a game intent (start, answer, next); resolves with an error the screen can show. */
+  const act = useCallback(
+    async (
+      event: 'game:start' | 'game:answer' | 'game:next',
+      payload?: unknown,
+    ): Promise<ProtocolError | undefined> => {
+      const socket = socketRef.current;
+      if (!socket) return { code: 'INTERNAL_ERROR', message: 'Still connecting…' };
+      const result = await (payload === undefined
+        ? request<null>(socket, event)
+        : request<null>(socket, event, payload));
+      return result.ok ? undefined : result.error;
+    },
+    [],
+  );
+
+  return { state, join, leave, act };
 }

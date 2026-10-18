@@ -6,6 +6,7 @@ import { buildJoinUrl } from '../joinUrl';
 import { MusicControl } from './MusicControl';
 import { QrCode } from './QrCode';
 import { RoomCodeTiles } from './RoomCodeTiles';
+import { TvGame } from './TvGame';
 import { useHostRoom } from './useHostRoom';
 import { useTvScale } from './useTvScale';
 
@@ -25,11 +26,13 @@ export function TvLobby() {
     );
   }
 
+  if (state.room.game) return <TvGame room={state.room} connected={state.connected} />;
+
   const roomCode = state.room.code;
   const players = state.room.players;
   const joinUrl = buildJoinUrl(window.location.origin, roomCode);
   const displayHost = new URL(joinUrl).host;
-  const canStart = players.length >= MIN_PLAYERS;
+  const canStart = players.filter((p) => p.connected).length >= MIN_PLAYERS;
   const vip = players.find((p) => p.isVip);
 
   return (

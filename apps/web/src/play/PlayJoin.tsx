@@ -7,6 +7,7 @@ import {
   joinRequestSchema,
   type JoinRequest,
   type PlayerSession,
+  type ProtocolError,
   type RoomSnapshot,
 } from '@gno/shared';
 import { sfx } from '../audio/engine';
@@ -15,6 +16,7 @@ import { FloatingShapes } from '../components/FloatingShapes';
 import { Logo } from '../components/Logo';
 import { seatAvatar } from '../components/avatars';
 import { playerColor } from '../components/playerColor';
+import { PlayGame } from './PlayGame';
 import { usePlayerSession } from './usePlayerSession';
 
 type FieldErrors = Partial<Record<keyof JoinRequest | 'form', string>>;
@@ -22,7 +24,7 @@ type FieldErrors = Partial<Record<keyof JoinRequest | 'form', string>>;
 export function PlayJoin() {
   const [searchParams] = useSearchParams();
   const codeFromLink = searchParams.get('code')?.trim().toUpperCase() || undefined;
-  const { state, join, leave } = usePlayerSession(codeFromLink);
+  const { state, join, leave, act } = usePlayerSession(codeFromLink);
 
   if (state.status === 'connecting') {
     return (
@@ -32,9 +34,15 @@ export function PlayJoin() {
       </Centered>
     );
   }
+  if (state.status === 'lobby' && state.room?.game) {
+    return (
+      <PlayGame session={state.session} room={state.room} connected={state.connected} act={act} />
+    );
+  }
   if (state.status === 'lobby') {
     return (
       <PlayerLobby
+        onStart={() => act('game:start')}
         session={state.session}
         room={state.room}
         connected={state.connected}
@@ -164,16 +172,33 @@ function PlayerLobby({
   connected,
   celebrate,
   onLeave,
+  onStart,
 }: {
   session: PlayerSession;
   room: RoomSnapshot | undefined;
   connected: boolean;
   celebrate: boolean;
   onLeave: () => void;
+  onStart: () => Promise<ProtocolError | undefined>;
 }) {
   const me = room?.players.find((p) => p.id === session.playerId);
   const others = room?.players.filter((p) => p.id !== session.playerId) ?? [];
   const [showConfetti, setShowConfetti] = useState(celebrate);
+  const [starting, setStarting] = useState(false);
+  const [startError, setStartError] = useState<string>();
+  const readyCount = room?.players.filter((p) => p.connected).length ?? 0;
+  const canStart = readyCount >= MIN_PLAYERS;
+
+  async function start() {
+    setStarting(true);
+    setStartError(undefined);
+    const error = await onStart();
+    setStarting(false);
+    if (error) {
+      setStartError(error.message);
+      sfx.oops();
+    }
+  }
 
   useEffect(() => {
     if (!showConfetti) return;
@@ -213,12 +238,30 @@ function PlayerLobby({
           data-testid="vip-note"
           className="relative max-w-xs rounded-2xl bg-pop-yellow/15 px-4 py-3 text-lg font-semibold text-pop-yellow"
         >
-          👑 You're the VIP! You'll start the game{' '}
-          {room && room.players.length < MIN_PLAYERS
-            ? `once ${MIN_PLAYERS} players are here`
-            : 'from here (coming soon)'}
-          .
+          👑 You're the VIP!{' '}
+          {canStart
+            ? 'Start when everyone is in.'
+            : `You can start once ${MIN_PLAYERS} players are here.`}
         </p>
+      )}
+      {me?.isVip && (
+        <button
+          type="button"
+          data-testid="start-game"
+          onClick={() => void start()}
+          disabled={!canStart || starting}
+          className="relative rounded-3xl bg-pop-pink px-8 py-4 text-3xl font-bold text-night-950 shadow-[0_7px_0_#b02a66] transition active:translate-y-1.5 active:shadow-none disabled:opacity-50"
+        >
+          {starting ? 'Starting…' : 'Start game 🚀'}
+        </button>
+      )}
+      {startError && (
+        <p role="alert" className="relative text-lg font-medium text-pop-orange">
+          🙈 {startError}
+        </p>
+      )}
+      {!me?.isVip && room && (
+        <p className="relative text-lg text-white/70">Waiting for the 👑 VIP to start the game…</p>
       )}
       {others.length > 0 && (
         <div className="relative flex flex-col items-center gap-2">
