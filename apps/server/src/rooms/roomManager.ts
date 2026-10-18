@@ -1,25 +1,29 @@
 import { randomBytes, randomUUID } from 'node:crypto';
 import {
-  DEFAULT_TRIVIA_SETTINGS,
+  DEFAULT_GAME,
+  DEFAULT_TIMING,
   MAX_PLAYERS,
   MIN_PLAYERS,
-  advance,
-  isQuestionOver,
+  act,
+  buildRounds,
+  gameView,
+  nextDeadline,
   nicknameSchema,
+  questionIds,
   removePlayer as removeFromGame,
-  revealAnswer,
-  shuffle,
-  standings,
+  skip,
   startGame,
-  submitAnswer,
-  type AnswerRejection,
+  tick,
+  type ActionRejection,
+  type BuildOptions,
   type ErrorCode,
-  type GameView,
+  type GameContent,
+  type GameId,
+  type PartyGame,
+  type PartyTiming,
   type Phase,
-  type Question,
+  type PlayerAction,
   type RoomSnapshot,
-  type TriviaGame,
-  type TriviaSettings,
 } from '@gno/shared';
 import { GameError } from './errors.js';
 import { generateRoomCode } from './roomCode.js';
@@ -41,7 +45,9 @@ export interface Room {
   players: Player[];
   vipId: string | undefined;
   lastActivity: number;
-  game: TriviaGame | undefined;
+  /** The game the lobby will play next. */
+  selectedGame: GameId;
+  game: PartyGame | undefined;
   /** Questions already asked in this room, so a rematch gets fresh ones. */
   usedQuestionIds: Set<string>;
 }
@@ -78,18 +84,27 @@ export interface RoomManagerOptions {
   store?: RoomStore;
   random?: () => number;
   newToken?: () => string;
-  questions?: Question[];
-  trivia?: Partial<TriviaSettings>;
+  content?: GameContent;
+  /** Round lengths and Trivia Chaos length. */
+  build?: Omit<BuildOptions, 'used'>;
+  timing?: Partial<PartyTiming>;
 }
 
-const REJECTIONS: Record<AnswerRejection, [ErrorCode, string]> = {
-  WRONG_PHASE: ['WRONG_PHASE', 'Answers are closed for this question.'],
-  WRONG_ROUND: ['WRONG_PHASE', 'That question is already over.'],
+/** Who is asking: the TV (host) or a phone. The TV and the VIP phone lead the game. */
+export type Actor = { role: 'host' } | { role: 'player'; playerId: string };
+
+const REJECTIONS: Record<ActionRejection, [ErrorCode, string]> = {
+  WRONG_PHASE: ['WRONG_PHASE', "That's not open right now."],
+  WRONG_ROUND: ['WRONG_PHASE', 'That round is already over.'],
   NOT_A_PLAYER: ['NOT_IN_ROOM', 'You are not playing in this game.'],
-  INVALID_CHOICE: ['INVALID_PAYLOAD', 'Pick one of the answers.'],
-  ALREADY_ANSWERED: ['ALREADY_ANSWERED', 'You already locked in an answer!'],
-  TOO_LATE: ['TOO_LATE', 'Time is up for this question.'],
+  NOT_YOUR_PICK: ['NOT_YOUR_PICK', "It's someone else's turn to pick."],
+  INVALID_ACTION: ['INVALID_PAYLOAD', 'That is not one of the options.'],
+  ALREADY_ANSWERED: ['ALREADY_ANSWERED', 'You already locked in!'],
+  TOO_LATE: ['TOO_LATE', 'Time is up!'],
+  TOO_FAST: ['TOO_FAST', 'Whoa, slow down a tiny bit!'],
 };
+
+const EMPTY_CONTENT: GameContent = { trivia: [], trueFalse: [], emoji: [], numbers: [] };
 
 const defaultToken = () => randomBytes(24).toString('base64url');
 
@@ -101,15 +116,17 @@ export class RoomManager {
   private readonly store: RoomStore;
   private readonly random: () => number;
   private readonly newToken: () => string;
-  private readonly questions: Question[];
-  readonly trivia: TriviaSettings;
+  private readonly content: GameContent;
+  private readonly build: Omit<BuildOptions, 'used'>;
+  readonly timing: PartyTiming;
 
   constructor(options: RoomManagerOptions = {}) {
     this.store = options.store ?? new InMemoryRoomStore();
     this.random = options.random ?? Math.random;
     this.newToken = options.newToken ?? defaultToken;
-    this.questions = options.questions ?? [];
-    this.trivia = { ...DEFAULT_TRIVIA_SETTINGS, ...options.trivia };
+    this.content = options.content ?? EMPTY_CONTENT;
+    this.build = options.build ?? {};
+    this.timing = { ...DEFAULT_TIMING, ...options.timing };
   }
 
   createRoom(now: number): Room {
@@ -121,6 +138,7 @@ export class RoomManager {
       players: [],
       vipId: undefined,
       lastActivity: now,
+      selectedGame: DEFAULT_GAME,
       game: undefined,
       usedQuestionIds: new Set(),
     };
@@ -216,6 +234,10 @@ export class RoomManager {
       if (room.players.length === 0) this.endGame(room);
       else this.tick(room, now);
     }
+    if (room.game) {
+      // Category Clash turns that belonged to the leaver go to someone still here.
+      room.game = reassignPicks(room.game, playerId);
+    }
     if (room.vipId === playerId) {
       const next = [...room.players].sort((a, b) => a.joinedAt - b.joinedAt || a.seat - b.seat)[0];
       room.vipId = next?.id;
@@ -224,10 +246,20 @@ export class RoomManager {
     return room;
   }
 
-  /** VIP starts Trivia Chaos with everyone in the lobby. */
-  startGame(code: string, playerId: string, now: number): Room {
+  /** The TV or VIP chooses which game the lobby plays next. */
+  selectGame(code: string, actor: Actor, gameId: GameId, now: number): Room {
     const room = this.getRoom(code);
-    this.requireVip(room, playerId);
+    this.requireLeader(room, actor);
+    if (room.phase !== 'LOBBY') throw new GameError('WRONG_PHASE', 'A game is already running.');
+    room.selectedGame = gameId;
+    room.lastActivity = now;
+    return room;
+  }
+
+  /** The TV or VIP starts the chosen game with everyone in the lobby. */
+  startGame(code: string, actor: Actor, now: number): Room {
+    const room = this.getRoom(code);
+    this.requireLeader(room, actor);
     if (room.phase !== 'LOBBY') throw new GameError('WRONG_PHASE', 'A game is already running.');
     if (room.players.filter((p) => p.connected).length < MIN_PLAYERS) {
       throw new GameError(
@@ -235,27 +267,25 @@ export class RoomManager {
         `You need at least ${MIN_PLAYERS} players to start.`,
       );
     }
-    if (this.questions.length === 0) throw new Error('No trivia questions loaded');
+    const playerIds = [...room.players].sort((a, b) => a.joinedAt - b.joinedAt).map((p) => p.id);
+    const rounds = buildRounds(room.selectedGame, this.content, playerIds, this.random, {
+      ...this.build,
+      used: room.usedQuestionIds,
+    });
+    if (rounds.length === 0) throw new Error(`No content loaded for ${room.selectedGame}`);
+    for (const id of questionIds(rounds)) room.usedQuestionIds.add(id);
 
-    let fresh = this.questions.filter((q) => !room.usedQuestionIds.has(q.id));
-    if (fresh.length < this.trivia.questionCount) {
-      room.usedQuestionIds.clear();
-      fresh = this.questions;
-    }
-    const picked = shuffle(fresh, this.random).slice(0, this.trivia.questionCount);
-    for (const q of picked) room.usedQuestionIds.add(q.id);
-
-    const playerIds = room.players.map((p) => p.id);
-    room.game = startGame(playerIds, picked, this.trivia, now, this.random);
+    room.game = startGame(room.selectedGame, playerIds, rounds, this.timing, now);
     room.phase = room.game.phase;
     room.lastActivity = now;
     return room;
   }
 
-  answer(code: string, playerId: string, round: number, choice: number, now: number): Room {
+  /** A phone answers, guesses, taps or picks. */
+  act(code: string, playerId: string, action: PlayerAction, now: number): Room {
     const room = this.getRoom(code);
-    if (!room.game) throw new GameError('WRONG_PHASE', 'No question is open right now.');
-    const result = submitAnswer(room.game, playerId, round, choice, now);
+    if (!room.game) throw new GameError('WRONG_PHASE', 'No game is running right now.');
+    const result = act(room.game, playerId, action, now);
     if ('rejected' in result) {
       const [errorCode, message] = REJECTIONS[result.rejected];
       throw new GameError(errorCode, message);
@@ -266,39 +296,46 @@ export class RoomManager {
     return room;
   }
 
-  /** VIP skips the rest of a reveal, or returns everyone to the lobby after the final scores. */
-  next(code: string, playerId: string, now: number): Room {
+  /** TV or VIP skips an intro or reveal, or returns everyone to the lobby after the final scores. */
+  next(code: string, actor: Actor, now: number): Room {
     const room = this.getRoom(code);
-    this.requireVip(room, playerId);
-    if (room.game?.phase === 'REVEAL') room.game = advance(room.game, now);
-    else if (room.game?.phase === 'FINAL') this.endGame(room);
+    this.requireLeader(room, actor);
+    const phase = room.game?.phase;
+    if (phase === 'INTRO' || phase === 'REVEAL') room.game = skip(room.game!, now);
+    else if (phase === 'FINAL') this.endGame(room);
     else throw new GameError('WRONG_PHASE', 'There is nothing to skip right now.');
+    this.tick(room, now);
     room.phase = room.game?.phase ?? 'LOBBY';
     room.lastActivity = now;
     return room;
   }
 
+  /** TV or VIP stops the game early and goes back to the lobby. */
+  quit(code: string, actor: Actor, now: number): Room {
+    const room = this.getRoom(code);
+    this.requireLeader(room, actor);
+    if (!room.game) throw new GameError('WRONG_PHASE', 'No game is running.');
+    this.endGame(room);
+    room.lastActivity = now;
+    return room;
+  }
+
   /**
-   * Applies whatever the clock says should have happened: closes a question at its deadline
-   * (or once every connected player answered) and ends a reveal. Returns true if anything changed.
+   * Applies whatever the clock says should have happened (intro ends, a round closes at its
+   * deadline or once every connected player is done, a reveal ends). Returns true if anything changed.
    */
   tick(room: Room, now: number): boolean {
     const before = room.game;
     if (!before) return false;
-    let game = before;
     const connected = room.players.filter((p) => p.connected).map((p) => p.id);
-    if (isQuestionOver(game, connected, now)) game = revealAnswer(game, now);
-    if (game.phase === 'REVEAL' && now >= game.revealEndsAt) game = advance(game, now);
-    room.game = game;
-    room.phase = game.phase;
-    return game !== before;
+    room.game = tick(before, connected, now);
+    room.phase = room.game.phase;
+    return room.game !== before;
   }
 
   /** When `tick` next needs to run for this room, or undefined if nothing is pending. */
   nextDeadline(room: Room): number | undefined {
-    if (room.game?.phase === 'QUESTION') return room.game.deadline;
-    if (room.game?.phase === 'REVEAL') return room.game.revealEndsAt;
-    return undefined;
+    return room.game && nextDeadline(room.game);
   }
 
   private endGame(room: Room) {
@@ -306,9 +343,10 @@ export class RoomManager {
     room.phase = 'LOBBY';
   }
 
-  private requireVip(room: Room, playerId: string) {
-    if (room.vipId !== playerId) {
-      throw new GameError('NOT_VIP', 'Only the 👑 player can do that.');
+  private requireLeader(room: Room, actor: Actor) {
+    if (actor.role === 'host') return;
+    if (room.vipId !== actor.playerId) {
+      throw new GameError('NOT_VIP', 'Only the 👑 player or the TV can do that.');
     }
   }
 
@@ -333,6 +371,7 @@ export class RoomManager {
       code: room.code,
       phase: room.phase,
       hostConnected: room.hostConnected,
+      selectedGame: room.selectedGame,
       game: room.game && gameView(room.game, now),
       players: [...room.players]
         .sort((a, b) => a.seat - b.seat)
@@ -347,19 +386,16 @@ export class RoomManager {
   }
 }
 
-function gameView(game: TriviaGame, now: number): GameView {
-  const { answer, ...question } = game.questions[game.round]!;
-  return {
-    round: game.round,
-    totalRounds: game.questions.length,
-    question,
-    questionMs: game.settings.questionMs,
-    deadline: game.deadline,
-    revealEndsAt: game.revealEndsAt,
-    serverNow: now,
-    answeredIds: Object.keys(game.answers),
-    scores: { ...game.scores },
-    ...(game.phase === 'REVEAL' && { reveal: { answer, results: { ...game.results } } }),
-    ...(game.phase === 'FINAL' && { standings: standings(game) }),
-  };
+/** Hands a leaver's upcoming Category Clash turns to the first player still in the game. */
+function reassignPicks(game: PartyGame, leaverId: string): PartyGame {
+  const heir = game.playerIds[0];
+  if (!heir) return game;
+  let changed = false;
+  const rounds = game.rounds.map((round, index) => {
+    if (index <= game.index || round.kind !== 'question' || round.pick?.chooserId !== leaverId)
+      return round;
+    changed = true;
+    return { ...round, pick: { ...round.pick, chooserId: heir } };
+  });
+  return changed ? { ...game, rounds } : game;
 }

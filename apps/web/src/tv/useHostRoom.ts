@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import type { HostSession, RoomSnapshot } from '@gno/shared';
-import { createSocket, request } from '../net/socket';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type { HostSession, ProtocolError, RoomSnapshot } from '@gno/shared';
+import { createSocket, request, type GameSocket } from '../net/socket';
 import { load, save, session } from '../net/storage';
 import { toLocalClock } from '../game/clock';
 
@@ -12,12 +12,22 @@ export type HostRoomState =
   | { status: 'ready'; room: RoomSnapshot; connected: boolean }
   | { status: 'error'; message: string };
 
-/** Creates (or after a refresh, resumes) this TV's room and keeps its live snapshot. */
-export function useHostRoom(): HostRoomState {
+export type HostEvent = 'game:select' | 'game:start' | 'game:next' | 'game:quit';
+
+/**
+ * Creates (or after a refresh, resumes) this TV's room and keeps its live snapshot. `send` lets
+ * the TV remote lead the game: choose, start, skip and quit.
+ */
+export function useHostRoom(): {
+  state: HostRoomState;
+  send: (event: HostEvent, payload?: unknown) => Promise<ProtocolError | undefined>;
+} {
   const [state, setState] = useState<HostRoomState>({ status: 'connecting' });
+  const socketRef = useRef<GameSocket>(undefined);
 
   useEffect(() => {
     const socket = createSocket();
+    socketRef.current = socket;
 
     async function openRoom() {
       const stored = load<HostSession>(session, HOST_KEY);
@@ -53,5 +63,14 @@ export function useHostRoom(): HostRoomState {
     };
   }, []);
 
-  return state;
+  const send = useCallback(async (event: HostEvent, payload?: unknown) => {
+    const socket = socketRef.current;
+    if (!socket) return { code: 'INTERNAL_ERROR' as const, message: 'Still connecting…' };
+    const result = await (payload === undefined
+      ? request<null>(socket, event)
+      : request<null>(socket, event, payload));
+    return result.ok ? undefined : result.error;
+  }, []);
+
+  return { state, send };
 }

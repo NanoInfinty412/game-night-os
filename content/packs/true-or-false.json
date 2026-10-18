@@ -1,0 +1,426 @@
+{
+  "id": "true-or-false",
+  "title": "True or False",
+  "questions": [
+    {
+      "id": "tf-01",
+      "category": "True or False",
+      "prompt": "A group of flamingos is called a flamboyance.",
+      "choices": ["True", "False"],
+      "answer": 0
+    },
+    {
+      "id": "tf-02",
+      "category": "True or False",
+      "prompt": "Octopuses have three hearts.",
+      "choices": ["True", "False"],
+      "answer": 0
+    },
+    {
+      "id": "tf-03",
+      "category": "True or False",
+      "prompt": "Banana plants are actually giant herbs, not trees.",
+      "choices": ["True", "False"],
+      "answer": 0
+    },
+    {
+      "id": "tf-04",
+      "category": "True or False",
+      "prompt": "Sealed honey can stay good to eat for thousands of years.",
+      "choices": ["True", "False"],
+      "answer": 0
+    },
+    {
+      "id": "tf-05",
+      "category": "True or False",
+      "prompt": "A baby goat is called a kid.",
+      "choices": ["True", "False"],
+      "answer": 0
+    },
+    {
+      "id": "tf-06",
+      "category": "True or False",
+      "prompt": "Sound cannot travel through empty space.",
+      "choices": ["True", "False"],
+      "answer": 0
+    },
+    {
+      "id": "tf-07",
+      "category": "True or False",
+      "prompt": "You can easily see the Great Wall of China from the Moon.",
+      "choices": ["True", "False"],
+      "answer": 1
+    },
+    {
+      "id": "tf-08",
+      "category": "True or False",
+      "prompt": "Wild penguins live at the North Pole.",
+      "choices": ["True", "False"],
+      "answer": 1
+    },
+    {
+      "id": "tf-09",
+      "category": "True or False",
+      "prompt": "Spiders are insects.",
+      "choices": ["True", "False"],
+      "answer": 1
+    },
+    {
+      "id": "tf-10",
+      "category": "True or False",
+      "prompt": "A tomato is a fruit.",
+      "choices": ["True", "False"],
+      "answer": 0
+    },
+    {
+      "id": "tf-11",
+      "category": "True or False",
+      "prompt": "Lightning never strikes the same place twice.",
+      "choices": ["True", "False"],
+      "answer": 1
+    },
+    {
+      "id": "tf-12",
+      "category": "True or False",
+      "prompt": "Goldfish can only remember things for three seconds.",
+      "choices": ["True", "False"],
+      "answer": 1
+    },
+    {
+      "id": "tf-13",
+      "category": "True or False",
+      "prompt": "Bats are completely blind.",
+      "choices": ["True", "False"],
+      "answer": 1
+    },
+    {
+      "id": "tf-14",
+      "category": "True or False",
+      "prompt": "The Atlantic is the biggest ocean on Earth.",
+      "choices": ["True", "False"],
+      "answer": 1
+    },
+    {
+      "id": "tf-15",
+      "category": "True or False",
+      "prompt": "Butterflies taste with their feet.",
+      "choices": ["True", "False"],
+      "answer": 0
+    },
+    {
+      "id": "tf-16",
+      "category": "True or False",
+      "prompt": "Humans have more than 200 bones.",
+      "choices": ["True", "False"],
+      "answer": 0
+    },
+    {
+      "id": "tf-17",
+      "category": "True or False",
+      "prompt": "The Sun is a planet.",
+      "choices": ["True", "False"],
+      "answer": 1
+    },
+    {
+      "id": "tf-18",
+      "category": "True or False",
+      "prompt": "An ostrich's eye is bigger than its brain.",
+      "choices": ["True", "False"],
+      "answer": 0
+    },
+    {
+      "id": "tf-19",
+      "category": "True or False",
+      "prompt": "Polar bears have black skin under their white fur.",
+      "choices": ["True", "False"],
+      "answer": 0
+    },
+    {
+      "id": "tf-20",
+      "category": "True or False",
+      "prompt": "The first farmed carrots were purple or yellow, not orange.",
+      "choices": ["True", "False"],
+      "answer": 0
+    },
+    {
+      "id": "tf-21",
+      "category": "True or False",
+      "prompt": "Kangaroos can easily walk backwards.",
+      "choices": ["True", "False"],
+      "answer": 1
+    },
+    {
+      "id": "tf-22",
+      "category": "True or False",
+      "prompt": "Water boils at 100°C at sea level.",
+      "choices": ["True", "False"],
+      "answer": 0
+    },
+    {
+      "id": "tf-23",
+      "category": "True or False",
+      "prompt": "Sharks are mammals.",
+      "choices": ["True", "False"],
+      "answer": 1
+    },
+    {
+      "id": "tf-24",
+      "category": "True or False",
+      "prompt": "Antarctica is the driest continent.",
+      "choices": ["True", "False"],
+      "answer": 0
+    },
+    {
+      "id": "tf-25",
+      "category": "True or False",
+      "prompt": "Owls can spin their heads all the way around in a full circle.",
+      "choices": ["True", "False"],
+      "answer": 1
+    },
+    {
+      "id": "tf-26",
+      "category": "True or False",
+      "prompt": "Frogs soak up water through their skin.",
+      "choices": ["True", "False"],
+      "answer": 0
+    },
+    {
+      "id": "tf-27",
+      "category": "True or False",
+      "prompt": "Snakes have eyelids.",
+      "choices": ["True", "False"],
+      "answer": 1
+    },
+    {
+      "id": "tf-28",
+      "category": "True or False",
+      "prompt": "Peanuts grow on trees.",
+      "choices": ["True", "False"],
+      "answer": 1
+    },
+    {
+      "id": "tf-29",
+      "category": "True or False",
+      "prompt": "Koalas are a kind of bear.",
+      "choices": ["True", "False"],
+      "answer": 1
+    },
+    {
+      "id": "tf-30",
+      "category": "True or False",
+      "prompt": "There is no air to breathe on the Moon.",
+      "choices": ["True", "False"],
+      "answer": 0
+    },
+    {
+      "id": "tf-31",
+      "category": "True or False",
+      "prompt": "Diamonds are made of carbon.",
+      "choices": ["True", "False"],
+      "answer": 0
+    },
+    {
+      "id": "tf-32",
+      "category": "True or False",
+      "prompt": "Hummingbirds can fly backwards.",
+      "choices": ["True", "False"],
+      "answer": 0
+    },
+    {
+      "id": "tf-33",
+      "category": "True or False",
+      "prompt": "All deserts are hot.",
+      "choices": ["True", "False"],
+      "answer": 1
+    },
+    {
+      "id": "tf-34",
+      "category": "True or False",
+      "prompt": "Dolphins rest one half of their brain at a time.",
+      "choices": ["True", "False"],
+      "answer": 0
+    },
+    {
+      "id": "tf-35",
+      "category": "True or False",
+      "prompt": "Glass is made mostly from sand.",
+      "choices": ["True", "False"],
+      "answer": 0
+    },
+    {
+      "id": "tf-36",
+      "category": "True or False",
+      "prompt": "Jupiter has more moons than Earth.",
+      "choices": ["True", "False"],
+      "answer": 0
+    },
+    {
+      "id": "tf-37",
+      "category": "True or False",
+      "prompt": "Bulls get angry because they see the color red.",
+      "choices": ["True", "False"],
+      "answer": 1
+    },
+    {
+      "id": "tf-38",
+      "category": "True or False",
+      "prompt": "Camels store water in their humps.",
+      "choices": ["True", "False"],
+      "answer": 1
+    },
+    {
+      "id": "tf-39",
+      "category": "True or False",
+      "prompt": "The Eiffel Tower is in Rome.",
+      "choices": ["True", "False"],
+      "answer": 1
+    },
+    {
+      "id": "tf-40",
+      "category": "True or False",
+      "prompt": "Fingernails grow faster than toenails.",
+      "choices": ["True", "False"],
+      "answer": 0
+    },
+    {
+      "id": "tf-41",
+      "category": "True or False",
+      "prompt": "Earthworms have eyes.",
+      "choices": ["True", "False"],
+      "answer": 1
+    },
+    {
+      "id": "tf-42",
+      "category": "True or False",
+      "prompt": "Baby pandas are born pink and tiny.",
+      "choices": ["True", "False"],
+      "answer": 0
+    },
+    {
+      "id": "tf-43",
+      "category": "True or False",
+      "prompt": "Saturn would float if you had a big enough bathtub.",
+      "choices": ["True", "False"],
+      "answer": 0
+    },
+    {
+      "id": "tf-44",
+      "category": "True or False",
+      "prompt": "Chameleons change color only to hide.",
+      "choices": ["True", "False"],
+      "answer": 1
+    },
+    {
+      "id": "tf-45",
+      "category": "True or False",
+      "prompt": "Bees have five eyes.",
+      "choices": ["True", "False"],
+      "answer": 0
+    },
+    {
+      "id": "tf-46",
+      "category": "True or False",
+      "prompt": "A rabbit's teeth never stop growing.",
+      "choices": ["True", "False"],
+      "answer": 0
+    },
+    {
+      "id": "tf-47",
+      "category": "True or False",
+      "prompt": "Different parts of your tongue taste only one flavor each.",
+      "choices": ["True", "False"],
+      "answer": 1
+    },
+    {
+      "id": "tf-48",
+      "category": "True or False",
+      "prompt": "Thunder is the sound made by lightning.",
+      "choices": ["True", "False"],
+      "answer": 0
+    },
+    {
+      "id": "tf-49",
+      "category": "True or False",
+      "prompt": "Sea otters use rocks as tools.",
+      "choices": ["True", "False"],
+      "answer": 0
+    },
+    {
+      "id": "tf-50",
+      "category": "True or False",
+      "prompt": "Ice floats because it is lighter than the same amount of water.",
+      "choices": ["True", "False"],
+      "answer": 0
+    },
+    {
+      "id": "tf-51",
+      "category": "True or False",
+      "prompt": "A giraffe's tongue is dark purple.",
+      "choices": ["True", "False"],
+      "answer": 0
+    },
+    {
+      "id": "tf-52",
+      "category": "True or False",
+      "prompt": "The Amazon rainforest is in Australia.",
+      "choices": ["True", "False"],
+      "answer": 1
+    },
+    {
+      "id": "tf-53",
+      "category": "True or False",
+      "prompt": "Mount Everest is the tallest mountain above sea level.",
+      "choices": ["True", "False"],
+      "answer": 0
+    },
+    {
+      "id": "tf-54",
+      "category": "True or False",
+      "prompt": "A spider's silk can be stronger than steel of the same thickness.",
+      "choices": ["True", "False"],
+      "answer": 0
+    },
+    {
+      "id": "tf-55",
+      "category": "True or False",
+      "prompt": "Plants need sunlight to make their food.",
+      "choices": ["True", "False"],
+      "answer": 0
+    },
+    {
+      "id": "tf-56",
+      "category": "True or False",
+      "prompt": "Sloths can hold their breath longer than dolphins.",
+      "choices": ["True", "False"],
+      "answer": 0
+    },
+    {
+      "id": "tf-57",
+      "category": "True or False",
+      "prompt": "Cats have nine lives.",
+      "choices": ["True", "False"],
+      "answer": 1
+    },
+    {
+      "id": "tf-58",
+      "category": "True or False",
+      "prompt": "A baby kangaroo is called a cub.",
+      "choices": ["True", "False"],
+      "answer": 1
+    },
+    {
+      "id": "tf-59",
+      "category": "True or False",
+      "prompt": "Mercury is the closest planet to the Sun.",
+      "choices": ["True", "False"],
+      "answer": 0
+    },
+    {
+      "id": "tf-60",
+      "category": "True or False",
+      "prompt": "Penguins can fly short distances.",
+      "choices": ["True", "False"],
+      "answer": 1
+    }
+  ]
+}

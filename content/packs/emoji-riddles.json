@@ -1,0 +1,237 @@
+{
+  "id": "emoji-riddles",
+  "title": "Emoji Riddles",
+  "questions": [
+    {
+      "id": "emoji-01",
+      "category": "Emoji Riddles",
+      "prompt": "🌧️ + 🎀",
+      "choices": ["Raindrop", "Rainbow", "Bow tie", "Rainfall"],
+      "answer": 1
+    },
+    {
+      "id": "emoji-02",
+      "category": "Emoji Riddles",
+      "prompt": "⭐ + 🐟",
+      "choices": ["Goldfish", "Sunfish", "Starfish", "Stargazer"],
+      "answer": 2
+    },
+    {
+      "id": "emoji-03",
+      "category": "Emoji Riddles",
+      "prompt": "🔥 + 🪰",
+      "choices": ["Fireplace", "Dragonfly", "Housefly", "Firefly"],
+      "answer": 3
+    },
+    {
+      "id": "emoji-04",
+      "category": "Emoji Riddles",
+      "prompt": "🧈 + 🪰",
+      "choices": ["Butterfly", "Buttercup", "Dragonfly", "Popcorn"],
+      "answer": 0
+    },
+    {
+      "id": "emoji-05",
+      "category": "Emoji Riddles",
+      "prompt": "☀️ + 🌸",
+      "choices": ["Sunshine", "Sunflower", "Daisy", "Moonflower"],
+      "answer": 1
+    },
+    {
+      "id": "emoji-06",
+      "category": "Emoji Riddles",
+      "prompt": "🍳 + 🎂",
+      "choices": ["Cupcake", "Omelette", "Pancake", "Fruitcake"],
+      "answer": 2
+    },
+    {
+      "id": "emoji-07",
+      "category": "Emoji Riddles",
+      "prompt": "❄️ + 👨",
+      "choices": ["Snowball", "Iceman", "Snowflake", "Snowman"],
+      "answer": 3
+    },
+    {
+      "id": "emoji-08",
+      "category": "Emoji Riddles",
+      "prompt": "👩 + 🐛",
+      "choices": ["Ladybug", "Bedbug", "Caterpillar", "Butterfly"],
+      "answer": 0
+    },
+    {
+      "id": "emoji-09",
+      "category": "Emoji Riddles",
+      "prompt": "🦶 + ⚽",
+      "choices": ["Footprint", "Football", "Kickball", "Baseball"],
+      "answer": 1
+    },
+    {
+      "id": "emoji-10",
+      "category": "Emoji Riddles",
+      "prompt": "🌙 + 💡",
+      "choices": ["Sunlight", "Lamp post", "Moonlight", "Starlight"],
+      "answer": 2
+    },
+    {
+      "id": "emoji-11",
+      "category": "Emoji Riddles",
+      "prompt": "🥤 + 🫐",
+      "choices": ["Blueberry", "Smoothie", "Raspberry", "Strawberry"],
+      "answer": 3
+    },
+    {
+      "id": "emoji-12",
+      "category": "Emoji Riddles",
+      "prompt": "🐱 + 🐟",
+      "choices": ["Catfish", "Goldfish", "Cat food", "Jellyfish"],
+      "answer": 0
+    },
+    {
+      "id": "emoji-13",
+      "category": "Emoji Riddles",
+      "prompt": "🔑 + 🕳️",
+      "choices": ["Keychain", "Keyhole", "Doorknob", "Pothole"],
+      "answer": 1
+    },
+    {
+      "id": "emoji-14",
+      "category": "Emoji Riddles",
+      "prompt": "☕ + 🎂",
+      "choices": ["Pancake", "Teacup", "Cupcake", "Coffee shop"],
+      "answer": 2
+    },
+    {
+      "id": "emoji-15",
+      "category": "Emoji Riddles",
+      "prompt": "🦷 + 🖌️",
+      "choices": ["Toothpaste", "Paintbrush", "Hairbrush", "Toothbrush"],
+      "answer": 3
+    },
+    {
+      "id": "emoji-16",
+      "category": "Emoji Riddles",
+      "prompt": "🌊 + 🐴",
+      "choices": ["Seahorse", "Seashell", "Racehorse", "Seaweed"],
+      "answer": 0
+    },
+    {
+      "id": "emoji-17",
+      "category": "Emoji Riddles",
+      "prompt": "🐶 + 🏠",
+      "choices": ["Dog bone", "Doghouse", "Birdhouse", "Puppy"],
+      "answer": 1
+    },
+    {
+      "id": "emoji-18",
+      "category": "Emoji Riddles",
+      "prompt": "✋ + 👜",
+      "choices": ["Handshake", "Backpack", "Handbag", "Glove"],
+      "answer": 2
+    },
+    {
+      "id": "emoji-19",
+      "category": "Emoji Riddles",
+      "prompt": "🌧️ + 🧥",
+      "choices": ["Rainbow", "Jacket", "Umbrella", "Raincoat"],
+      "answer": 3
+    },
+    {
+      "id": "emoji-20",
+      "category": "Emoji Riddles",
+      "prompt": "❄️ + ⚽",
+      "choices": ["Snowball", "Snowman", "Football", "Ice cube"],
+      "answer": 0
+    },
+    {
+      "id": "emoji-21",
+      "category": "Emoji Riddles",
+      "prompt": "🌲 + 🍎",
+      "choices": ["Pinecone", "Pineapple", "Apple pie", "Crab apple"],
+      "answer": 1
+    },
+    {
+      "id": "emoji-22",
+      "category": "Emoji Riddles",
+      "prompt": "🦶 + 🖨️",
+      "choices": ["Football", "Fingerprint", "Footprint", "Footstep"],
+      "answer": 2
+    },
+    {
+      "id": "emoji-23",
+      "category": "Emoji Riddles",
+      "prompt": "📖 + 🐛",
+      "choices": ["Bookshelf", "Earthworm", "Notebook", "Bookworm"],
+      "answer": 3
+    },
+    {
+      "id": "emoji-24",
+      "category": "Emoji Riddles",
+      "prompt": "🐴 + 👞",
+      "choices": ["Horseshoe", "Horseback", "Snowshoe", "Racehorse"],
+      "answer": 0
+    },
+    {
+      "id": "emoji-25",
+      "category": "Emoji Riddles",
+      "prompt": "🚪 + 🔔",
+      "choices": ["Doorknob", "Doorbell", "Bluebell", "Cowbell"],
+      "answer": 1
+    },
+    {
+      "id": "emoji-26",
+      "category": "Emoji Riddles",
+      "prompt": "☀️ + 🕶️",
+      "choices": ["Sunshine", "Eyeglasses", "Sunglasses", "Sunscreen"],
+      "answer": 2
+    },
+    {
+      "id": "emoji-27",
+      "category": "Emoji Riddles",
+      "prompt": "🎵 + 📦",
+      "choices": ["Jukebox", "Lunchbox", "Toolbox", "Music box"],
+      "answer": 3
+    },
+    {
+      "id": "emoji-28",
+      "category": "Emoji Riddles",
+      "prompt": "🧠 + 🌪️",
+      "choices": ["Brainstorm", "Thunderstorm", "Brainwave", "Tornado"],
+      "answer": 0
+    },
+    {
+      "id": "emoji-29",
+      "category": "Emoji Riddles",
+      "prompt": "🏠 + ⛵",
+      "choices": ["Sailboat", "Houseboat", "Lighthouse", "Treehouse"],
+      "answer": 1
+    },
+    {
+      "id": "emoji-30",
+      "category": "Emoji Riddles",
+      "prompt": "🐮 + 👦",
+      "choices": ["Cowbell", "Cowshed", "Cowboy", "Farmer"],
+      "answer": 2
+    },
+    {
+      "id": "emoji-31",
+      "category": "Emoji Riddles",
+      "prompt": "🍯 + 🐝",
+      "choices": ["Honeycomb", "Bumblebee", "Beehive", "Honeybee"],
+      "answer": 3
+    },
+    {
+      "id": "emoji-32",
+      "category": "Emoji Riddles",
+      "prompt": "🐟 + 🥣",
+      "choices": ["Fishbowl", "Fish fingers", "Goldfish", "Salad bowl"],
+      "answer": 0
+    },
+    {
+      "id": "emoji-33",
+      "category": "Emoji Riddles",
+      "prompt": "🥜 + 🧈",
+      "choices": ["Butter knife", "Peanut butter", "Peanut shell", "Popcorn"],
+      "answer": 1
+    }
+  ]
+}

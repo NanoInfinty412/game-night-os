@@ -2,15 +2,16 @@ import type { FastifyBaseLogger } from 'fastify';
 import { Server, type Socket } from 'socket.io';
 import { ZodError } from 'zod';
 import {
-  answerRequestSchema,
   joinRequestSchema,
+  playerActionSchema,
+  selectGameSchema,
   resumeRequestSchema,
   type Ack,
   type ClientToServerEvents,
   type ServerToClientEvents,
 } from '@gno/shared';
 import { GameError } from '../rooms/errors.js';
-import type { Room, RoomManager } from '../rooms/roomManager.js';
+import type { Actor, Room, RoomManager } from '../rooms/roomManager.js';
 
 export interface SocketData {
   roomCode?: string;
@@ -37,6 +38,8 @@ export interface RoomSocketOptions {
   /** How long an empty, disconnected room survives. */
   abandonedRoomMs: number;
   sweepIntervalMs: number;
+  /** Tapping races update the TV at most this often instead of on every tap. */
+  tapBroadcastMs: number;
   now: () => number;
 }
 
@@ -44,6 +47,7 @@ export const DEFAULT_ROOM_SOCKET_OPTIONS: RoomSocketOptions = {
   lobbyGraceMs: 60_000,
   abandonedRoomMs: 30 * 60_000,
   sweepIntervalMs: 60_000,
+  tapBroadcastMs: 120,
   now: Date.now,
 };
 
@@ -62,11 +66,27 @@ export function registerRoomSockets(
   const playerSockets = new Map<string, string>();
   const graceTimers = new Map<string, ReturnType<typeof setTimeout>>();
   const gameTimers = new Map<string, ReturnType<typeof setTimeout>>();
+  const pendingBroadcasts = new Map<string, ReturnType<typeof setTimeout>>();
 
   /** Sends the room to every screen in it, then makes sure its game clock is armed. */
   function broadcast(room: Room) {
+    clearTimeout(pendingBroadcasts.get(room.code));
+    pendingBroadcasts.delete(room.code);
     io.to(channel(room.code)).emit('room:state', rooms.snapshot(room, now()));
     scheduleGame(room);
+  }
+
+  /** Batches rapid changes (tapping races) into one broadcast every few frames. */
+  function broadcastSoon(room: Room) {
+    if (pendingBroadcasts.has(room.code)) return;
+    pendingBroadcasts.set(
+      room.code,
+      setTimeout(() => {
+        pendingBroadcasts.delete(room.code);
+        const current = rooms.getRoomOrUndefined(room.code);
+        if (current) broadcast(current);
+      }, options.tapBroadcastMs),
+    );
   }
 
   function clearGameTimer(code: string) {
@@ -123,6 +143,15 @@ export function registerRoomSockets(
       throw new GameError('NOT_IN_ROOM', 'You are not in a room.');
     }
     return { roomCode, playerId };
+  }
+
+  /** The TV or a phone in a room, for leader-only requests (select, start, next, quit). */
+  function actorOf(socket: GameSocket): { roomCode: string; actor: Actor } {
+    const { roomCode, role, playerId } = socket.data;
+    if (roomCode && role === 'host') return { roomCode, actor: { role: 'host' } };
+    if (roomCode && role === 'player' && playerId)
+      return { roomCode, actor: { role: 'player', playerId } };
+    throw new GameError('NOT_IN_ROOM', 'You are not in a room.');
   }
 
   function cancelGrace(playerId: string) {
@@ -229,28 +258,50 @@ export function registerRoomSockets(
       }),
     );
 
-    socket.on('game:start', (ack) =>
+    socket.on('game:select', (payload, ack) =>
       handle(socket, ack, () => {
-        const { roomCode, playerId } = playerOf(socket);
-        broadcast(rooms.startGame(roomCode, playerId, now()));
+        const { roomCode, actor } = actorOf(socket);
+        const { gameId } = selectGameSchema.parse(payload);
+        broadcast(rooms.selectGame(roomCode, actor, gameId, now()));
         return null;
       }),
     );
 
-    socket.on('game:answer', (payload, ack) =>
+    socket.on('game:start', (ack) =>
+      handle(socket, ack, () => {
+        const { roomCode, actor } = actorOf(socket);
+        broadcast(rooms.startGame(roomCode, actor, now()));
+        return null;
+      }),
+    );
+
+    socket.on('game:action', (payload, ack) =>
       handle(socket, ack, () => {
         const { roomCode, playerId } = playerOf(socket);
-        const { round, choice } = answerRequestSchema.parse(payload);
-        broadcast(rooms.answer(roomCode, playerId, round, choice, now()));
+        const action = playerActionSchema.parse(payload);
+        const room = rooms.act(roomCode, playerId, action, now());
+        const racing = action.type === 'tap' && room.game?.round.kind === 'mash';
+        if (racing && room.phase === 'PLAY') broadcastSoon(room);
+        else broadcast(room);
         return null;
       }),
     );
 
     socket.on('game:next', (ack) =>
       handle(socket, ack, () => {
-        const { roomCode, playerId } = playerOf(socket);
-        const room = rooms.next(roomCode, playerId, now());
+        const { roomCode, actor } = actorOf(socket);
+        const room = rooms.next(roomCode, actor, now());
         if (room.phase === 'LOBBY') graceForDisconnected(room);
+        broadcast(room);
+        return null;
+      }),
+    );
+
+    socket.on('game:quit', (ack) =>
+      handle(socket, ack, () => {
+        const { roomCode, actor } = actorOf(socket);
+        const room = rooms.quit(roomCode, actor, now());
+        graceForDisconnected(room);
         broadcast(room);
         return null;
       }),
@@ -283,14 +334,18 @@ export function registerRoomSockets(
       io.in(channel(code)).socketsLeave(channel(code));
       hostSockets.delete(code);
       clearGameTimer(code);
+      clearTimeout(pendingBroadcasts.get(code));
+      pendingBroadcasts.delete(code);
     }
   }, options.sweepIntervalMs);
   sweeper.unref();
 
   return () => {
     clearInterval(sweeper);
-    for (const timer of [...graceTimers.values(), ...gameTimers.values()]) clearTimeout(timer);
-    graceTimers.clear();
-    gameTimers.clear();
+    const timers = [graceTimers, gameTimers, pendingBroadcasts];
+    for (const map of timers) {
+      for (const timer of map.values()) clearTimeout(timer);
+      map.clear();
+    }
   };
 }
