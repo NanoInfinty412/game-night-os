@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="night">#0b0620</color>
+    <color name="night_raised">#1c1240</color>
+    <color name="night_line">#3a2a70</color>
+    <color name="pink">#ff4f9a</color>
+    <color name="yellow">#ffd23f</color>
+    <color name="cyan">#3ee0d0</color>
+    <color name="text">#ffffff</color>
+    <color name="text_soft">#c9bff0</color>
+</resources>

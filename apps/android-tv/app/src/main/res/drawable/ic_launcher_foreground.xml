@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A playful die with a yellow star: the Game Night mark. 108dp adaptive-icon canvas. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- die body -->
+    <path
+        android:fillColor="#ff4f9a"
+        android:pathData="M40,34h28a6,6 0,0 1,6 6v28a6,6 0,0 1,-6 6h-28a6,6 0,0 1,-6 -6v-28a6,6 0,0 1,6 -6z" />
+    <!-- pips -->
+    <path
+        android:fillColor="#0b0620"
+        android:pathData="M45,45m-4,0a4,4 0,1 1,8 0a4,4 0,1 1,-8 0M54,54m-4,0a4,4 0,1 1,8 0a4,4 0,1 1,-8 0M63,63m-4,0a4,4 0,1 1,8 0a4,4 0,1 1,-8 0" />
+    <!-- star -->
+    <path
+        android:fillColor="#ffd23f"
+        android:pathData="M74,24l2.6,5.6 6.1,0.7 -4.5,4.2 1.2,6 -5.4,-3 -5.4,3 1.2,-6 -4.5,-4.2 6.1,-0.7z" />
+    <!-- sparkle -->
+    <path
+        android:fillColor="#3ee0d0"
+        android:pathData="M30,76l1.5,3.5 3.5,1.5 -3.5,1.5 -1.5,3.5 -1.5,-3.5 -3.5,-1.5 3.5,-1.5z" />
+</vector>

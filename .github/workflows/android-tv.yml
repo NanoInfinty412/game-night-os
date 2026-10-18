@@ -1,0 +1,45 @@
+name: Android TV app
+
+on:
+  push:
+    branches: ['**']
+    paths:
+      - 'apps/android-tv/**'
+      - '.github/workflows/android-tv.yml'
+  pull_request:
+    paths:
+      - 'apps/android-tv/**'
+      - '.github/workflows/android-tv.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build debug APK
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/android-tv
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Build
+        run: ./gradlew --no-daemon assembleDebug
+
+      - name: Rename APK
+        run: cp app/build/outputs/apk/debug/app-debug.apk game-night-tv.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: game-night-tv-apk
+          path: apps/android-tv/game-night-tv.apk
+          if-no-files-found: error
